@@ -1,0 +1,112 @@
+\label[UPUBOOT]
+
+\sec Nahrátí upstreamového zavaděče U-Boot
+
+Stáhnutí a přeložení zdrojových kódů převaděče \ref[UPLINUXT20].
+
+\begtt
+$ git clone git://git.denx.de/u-boot.git
+$ export CROSS_COMPILE=~/gcc-linaro/bin/arm-linux-gnueabihf-
+$ export ARCH=arm
+$ make colibri_t20_iris_config
+$ make -j8
+\endtt
+
+Utility tegrarcn a cbootimage sloužící k flashování:
+
+\begtt
+$ git clone https://github.com/NVIDIA/cbootimage-configs.git
+\endtt
+
+Překlad BCT a vytvoření image s U-Boot binárkou:
+
+\begtt
+$ cbootimage -gbct -t20 
+		itegra20/toradex/colibri-t20/colibri-t20_512_v12_nand.bct.cfg 
+ 		colibri-t20_512_v12_nand.bct
+$ cp ../u-boot/u-boot-dtb-tegra.bin u-boot.bin
+$ cbootimage -t20
+ 		tegra20/toradex/colibri-t20/colibri-t20_512_v12_nand.img.cfg 
+ 		colibri-t20_512_v12_nand.img
+\endtt
+
+Nahrání image v recovery módu a následné spustění image:
+
+\begtt
+$ tegrarcm --bct colibri-t20_512_v12_nand.bct --loadaddr=0x00108000
+ 		--bootloader=../u-boot/u-boot-dtb-tegra.bin
+\endtt
+
+Nahrátí bootloaderu do paměti modulu v U-Bootu konzoli:
+
+\begtt
+Tegra20 (Colibri) # usb start
+(Re)start USB...
+USB1: USB EHCI 1.00
+scanning bus 1 for devices... 1 USB Device(s) found
+USB2: USB EHCI 1.00
+scanning bus 2 for devices... 2 USB Device(s) found
+ scanning usb for storage devices... 0 Storage Device(s) found
+ scanning usb for ethernet devices... 1 Ethernet Device(s) found
+Tegra20 (Colibri) # setenv ipaddr 192.168.80.90
+Tegra20 (Colibri) # setenv serverip 192.168.80.3
+Tegra20 (Colibri) # tftpboot 0x02100000 colibri-t20_512_v12_nand.img
+Waiting for Ethernet connection... done.
+TFTP from server 192.168.80.3; our IP address is 192.168.80.90
+Filename 'colibri-t20_512_v12_nand.img'.
+Load address: 0x02100000
+Loading: #################################
+         3.6 MiB/s
+done
+Bytes transferred = 729088 (b2000 hex)
+\endtt
+
+Délka přeneseného obrazu je 0xb2000 viz. výše. ta bude potřeba k zapsání na NAND.
+Přepsání bootloaderu v NAND paměti:
+
+\begtt
+Tegra20 (Colibri) # nand erase.chip
+
+NAND erase.chip: device 0 whole chip
+Erasing at 0x3ffc0000 -- 100% complete.
+OK
+Tegra20 (Colibri) # nand write 0x02100000 0 0xb2000
+
+NAND write: device 0 offset 0x0, size 0x95000
+ 577536 bytes written: OK
+\endtt
+
+\label[UPLINUX]
+
+\sec Nahrátí upstreamového linuxového jádra
+
+Stážení a přeložení zdrojových kódů Linuxového jádra.
+
+\begtt
+$ git clone git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+$ export LOADADDR=0x408000
+$ export ARCH=arm
+$ export CROSS_COMPILE=/PATH/gcc-linaro/bin/arm-linux-gnueabihf-
+$ cd linux
+$ git checkout v3.19
+$ make tegra_defconfig
+$ make -j8 uImage
+\endtt
+
+Náhrátí linuxového jádra na desku za pomoci ethernetového připojení.
+
+\begtt
+Tegra20 (Colibri) # usb start
+Tegra20 (Colibri) # setenv ipaddr 192.168.80.90
+Tegra20 (Colibri) # setenv serverip 192.168.80.3
+Tegra20 (Colibri) # tftpboot ${kernel_addr_r} zImage
+Tegra20 (Colibri) # tftpboot ${fdt_addr_r} tegra20-iris-512.dtb
+Tegra20 (Colibri) # set bootargs console=ttyS0,115200n8 earlyprintk
+		root=/dev/mmcblk0p1 rootfstype=ext2 rw rootdelay=1
+Tegra20 (Colibri) # bootm ${kernel_addr_r} - ${fdt_addr_r}
+\endtt
+
+
+
+
+
