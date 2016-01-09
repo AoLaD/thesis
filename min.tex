@@ -76,22 +76,22 @@ XXX Text úvodu do realizace.
 
 	Jedním z kritických problémů při zadání této diplomové práce byla nedostupnost hlavičkových souborů popisujících periferie mikrokontroleru a registry jádra.
 Jediné existující hlavičkové soubory byly pod licencí TI, která byla nekompatibilní s licencí operačního systému RTEMS.
-Důsledkem nekompatibility licencí byla nemožnost přijmout hlavičkové soubory od firmy Texas Instruments do RTEMS projektu.
+Důsledkem nekompatibility licencí byla nemožnost přijmout hlavičkové soubory od firmy Texas Instruments do oficiálního vývojového stromu RTEMS.
 Mezi cíle této diplomové práce tedy patří návrh a vytvoření vlastních hlavičkových souborů pod licencí kompatibilní s projektem RTEMS.
 
-Legální způsob vytvoření hlaviček je pouze extrakce dat z veřejně přístupného referenčního manuálu mikrokontroléru TMS570.
+Použití veřejně dostupného popisu registrů, který je součástí referenčních manuálů, bylo vyhodnoceno jako jediný právně a licenčně bezrizikový způsob získání potřebných souborů.
 Pro vytvoření hlavičkového souboru shodného s hlavičkovým souborem od firmy Texas Instruments stačilo vyextrahovat jméno registru, popis a jeho umístění v paměti mikrokontroleru.
 Náplní diplomové práce bylo kromě vygenerování shodných hlavičkových souborů i vylepšení těchto souborů a struktur, což by mohlo vést ke zrychlení vývoje a většímu programátorskému komfortu při používání nových hlavičkových souborů.
-Pro účely vylepšení hlavičkových souborů musely být vyextrahovány další informace z referenčního manuálu.
+Pro účely přípravy podrobnějších hlavičkových souborů musely být vyextrahovány další informace z referenčního manuálu.
 Mezi tyto informace patří například bitová pole registrů, jejich možné hodnoty, informace a popisy.
 
 Referenční manuál popisující periferie mikrokontroléru TMS570 obsahuje přibližně dva tisíce stránek.
 Mezi hlavní kritéria generátoru hlaviček patřila rychlost extrakce dat a tvorba nových hlavičkových souborů.
 Dále pak korektnost vyextrahovaných dat.
 Hlavičkové soubory jsou používané programátory s předpokladem, že jsou správné.
-Jediná drobná chyba může zpomalit vývoj nové aplikace o několik týdnů.
+Hledání i jen jediné drobné chyby může zpomalit vývoj nové aplikace o několik týdnů.
 
-V rámci práce byly vyzkoušena efektivita a korektnost následujících několika přístupů.
+V rámci práce byla vyzkoušena efektivita a korektnost následujících několika přístupů.
 
 \secc Ruční extrakce
 
@@ -106,27 +106,30 @@ Vytvoření jednoho hlavičkového souboru znamená mnoho hodin monnotoního kop
 	Dalším možným přístupem je extrakce dat z referenčního manuálu za pomoci pouze naprogramovaného kódu.
 Výhodou tohoto přístupu je snadná opakovatelnost a relativně jednoduché převedení na generování hlaviček pro jiný mikrokontroler od firmy Texas Instrument.
 
-Referenční manuál se pomocí otevřených nástrojů převedl do formátu čistého textu.
+Referenční manuál se pomocí otevřených nástrojů převedl z formátu PDF do formátu čistého textu.
 Tento text se následně mohl zpracovávat skriptovacím jazykem Python.
 Naprogramovanému skriptu se podařilo automaticky načíst z obsahu seznam všech periferií a ty následně vyhledat a spárovat v dalším textu.
 Vygenerovat informace nutné k sestavení původních hlavičkových souborů od firmy Texas Instruments se povedlo ze dvou třetin.
 Hlavním důvodem chyb byl nesourodý styl textu referenčního manuálu a tedy potřeba, aby se skript automaticky přizpůsoboval obsahu a formě textu.
 Řešení takového problému není triviální.
 Taktéž možnost vygenerovat informace o bitových polích je z čistého textu nereálná, protože v něm už neexistují informace o poloze textu a tabulek.
-Posledním problémem tohoto přístupu je velká závislost na původním referenčním manuálu, který již k mikrokontroléru TMS570 existuje již ve třech verzích.
+Posledním problémem tohoto přístupu je velká závislost na původním referenčním manuálu, který k mikrokontroléru TMS570 existuje již ve třech verzích.
 Ze třetí nejmodernější verze nejde tímto způsobem vyextrahovat ani jeden registr.
 
 \secc Makra
 
 	Cílem dalšího přístupu byla snaha zůstat u automatického generování hlavičkových souborů tak, aby se snadno mohla měnit jejich cílová podoba.
 Avšak přístup k extrakci dat z referenčního manuálu byl odlišný.
-Hlavní myšlenkou bylo zůstat u formátu pdf, který zachovává všechny informace o poloze textu.
+Hlavní myšlenkou bylo zůstat u formátu PDF, který zachovává všechny informace o poloze textu.
 Způsob jak s těmito informacemi pracovat vyžaduje využití člověka nebo použití pokročilých rozpoznávacích metod pro zpracování obrazu.
 
 Rozpoznávání obrazu bylo vyzkoušeno pomocí otevřeného projektu Poppler a několika dalších nepříliš udržovaných utilit.
 
-Poslední verze tohoto přístupu používá pro extrakci dat skript jazyka Autohotkey.
-Skript běží v operačním systému a po stisku příslušného tlačítka provede nad referenčním manuálem serii krátkých operací.
+
+Po těchto experimentech byl nakonec použitý postup kombinující zautomatizovaný výběr do schránky a další zpracování v jazyce Python.
+Formát výstupních dat ze scriptu je snadno modifikovatelný.
+Script využívá jazyka Autohotkey a běží v operačním systému.
+Pracuje jako stavový automat a po stisku příslušného tlačítka provede nad referenčním manuálem serii krátkých operací.
 Pomocí schránky vykopíruje data z referenčního manuálu, doplní je o požadované náležitosti a zapíše na disk.
 Takto zpracovaná data mají vždy stejný a snadno nastavitelný formát, což z nich dělá ideální vstup do dalšího programu generujícího hlavičkové soubory.
 Výhodou tohoto přístupu je použití snadno modifikovatelných skriptů, které zajišťují velkou adaptabilitu na jiné styly textu či jiné referenční manuály.
@@ -138,7 +141,7 @@ Tato metoda byla použita pro její nejlepší poměr mezi časem stráveným ex
 
 \secc Budoucí rozšíření
 
-	Naposledy zmíněný postup je snadno replikovatelný a použitelný v praxi.
+	{\bf Naposledy zmíněný postup je snadno replikovatelný a použitelný v praxi. }
 Avšak pro případy potřeby extrahovat data k vícero mikrokontrolérům byl navržen ještě jeden komfortnější přístup. %TO BE CON
 
 \sec Generování hlavičkových souborů
@@ -147,8 +150,10 @@ Avšak pro případy potřeby extrahovat data k vícero mikrokontrolérům byl n
 Generátor je rozdělený na dvě části.
 První část je specifická pro tento projekt.
 Druhá část je obecná a mohla by sloužit ke generování libovolných hlavičkových souborů akceptovatelných RTEMS komunitou.
-Generátor je takto rozdělen kvůli úspoře času a kódu.
-Kdyby druhá, generovací, část měla vstupem jakákoliv data ve formátu JSON, byl by její kód velmi obsáhlý a plný výjimek.
+Generátor je takto rozdělen kvůli úspoře času a i možnosti později upravit data v generované databázi.
+Hlavním důvodem rozdělení generovacího procesu na dvě části je obava o zbytečnou komplexitu generovacího algoritmu.
+V případě, kdy by generovací proces rozdělen nebyl, musel by být schopen zpracovat jakoukoli formu vstupních dat.
+To by mohlo vést k implementaci plné vyjímek a přepínačů, která by se postupně nabalovala při každém přizpůsobení novému mikrokontroléru.
 Proto byl vytvořen datový standard, který je generovací část algoritmu schopna převést do hlavičkového souboru.
 Tento standardní formát se snaží vytvořit první čistící část generátoru.
 %	OBRAZEK postup prevodu
@@ -156,18 +161,18 @@ Tento standardní formát se snaží vytvořit první čistící část generát
 \secc Datové formáty generátoru
 
 	Při rozhodování o datové reprezentaci zpracovávaných dat byl brán v potaz formát XML a formát JSON.
-Výběr vyhrál formát JSON hlavně kvůli možnostem snadné úpravy v libovolném textovém editoru a připravených dekódovacích knihovnách v jazyku Python.
+Formát JSON byl zvolený jako vhodnější na základě jeho snadné úpravy v libovolném textovém editoru a na základě jeho připravené podpory v jazyku Python.
 Mezi další výhody JSON patří jednoduchost a zároveň velké možnosti uspořádání dat. 
 
-\secc První část generátoru - dočištění
+\secc První část generátoru - standardizace dat
 
 	Vstupem do první části jsou data vyextrahovaná z referenčního manuálu, například pomocí skriptů jazyka Autohotkey.
 Tato data již mají strukturu typu JSON avšak odpovídají spíše formátu referenčního manuálu než formátu vyžadovaného generovací částí.
-Příklad této triviální úpravy je přiložen mezi zdrojovými soubory.
+Příklad této triviální úpravy je přiložen mezi zdrojovými soubory. {\bf odkaz na github}
 
 \secc Druhá část generátoru - generace
 
-	Díky neměným vstupům do této části není generace složitá.
+	Standardní formát vstupu do této části nedělá generaci složitou.
 Program byl navržen tak, aby bylo možno jednoduše měnit a opravovat výstupní formát hlavičkových souborů až do momentu, kdy RTEMS komunita pozitivně odpoví na možné začlenění do projektu.
 
 \secc Hlavičkové soubory
@@ -178,6 +183,8 @@ Dále pak obsahuje vnitřní popis všech bitových polí každého registru a p
 Při použití těchto maker může programátor dosáhnout vyšší čitelnosti a přenositelnosti aplikačního kódu.
 Pro každý registr a bitové pole je zde krátký popisující text.
 Možné fyzické hodnoty bitového pole se do hlaviček prozatím nedostaly.
+
+{\bf obrázek a něco}
 
 \sec Start operačního systému
 
