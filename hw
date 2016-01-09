@@ -1,6 +1,6 @@
 \chap Hardware
 
-\sec CORTEX-R4
+\sec CORTEX--R4
 
 \secc architektura
 
@@ -14,11 +14,11 @@
 
 Texas Instruments nabízí rodinu mikrokontrolérů TMS570, které jsou vhodné pro použití v bezpečnostně-kritických aplikacích.
 Obvody TMS570 mají snahu zjednodušit vývoj cílových systémů, neboť jsou již primárně navrženy pro dosažení Safety Integrity Level 3 (SIL 3) standardu IEC61508.
-V současné době jsou dostupné například moduly TMS570LS, zahrnující dva 32-bitové procesory Cortex™ R4F CPU, pracující v režimu "lock-step".
+V současné době jsou dostupné například moduly TMS570LS, zahrnující dvě 32-bitové jádra CORTEX--R4, pracující v režimu "lock-step".
 Taktované jsou na 160 MHz (250 DMIPS) a při práci využívají přidruženou jednotku pro práci s plovoucí čárkou (FPU), vhodnou pro rychlé 32-bitové a 64-bitové výpočty a operace s plovoucí desetinnou čárkou (IEEE 754).
 Instrukce s plovoucí čárkou a celočíselné instrukce je tak možné zpracovávat paralelně, s cílem dosažení vyššího výpočetního výkonu.
 
-Jádro Cortex-R4 obsahuje dvaatřiceti bitovou ARM a šestnácti nebo dvaatřiceti bitovou Thumb2 instrukční sadu.
+Jádro CORTEX--R4 obsahuje dvaatřiceti bitovou ARM a šestnácti nebo dvaatřiceti bitovou Thumb2 instrukční sadu.
 Jádro dovoluje aplikaci přepínat mezi oběma instrukčními sadami, podle aktuálních požadavků programového kódu.
 Tím je zajištěn optimální kompromis mezi výpočetní rychlostí a velikostí programového kódu.
 Obvody z řady TMS570 jsou v současné době k dispozici s integrovanou programovou pamětí typu Flash s kapacitou 1 až 2 MB a datovou pamětí 128 až 160 KB.
@@ -27,28 +27,28 @@ Důležitou složkou mikrokontrolérů TMS570 je tzv.
 High End Timer (NHET).
 Jedná se o přidružený časovací koprocesor, který lze programovat pomocí speciálních instrukcí.
 
-Pro snížení zatížení procesoru je možné čtení i zápis provádět pomocí DMA nebo HTU (High End Timer Transfer Unit), s využitím NHET DMA řadiče.
+Pro snížení zatížení mikrokontroléru je možné čtení i zápis provádět pomocí DMA nebo HTU (High End Timer Transfer Unit), s využitím NHET DMA řadiče.
 
 Pro konverzi analogových signálů z připojených senzorů jsou v obvodech TMS570LS dostupné dva analogově-digitální převodníky typu MibADC (multi-input-buffered analog-digital converter) s 12-bitovým rozlišením a 24 vstupními kanály.
 Pro snížení zatížení jádra obvodu jsou oba moduly MibADC vybaveny svou vlastní paměťovou oblastí RAM, ve které je možné uchovávat až 64 výsledků posledních konverzí.
 Výsledky jsou ukládány pro každý modul samostatně a to v předem stanovených časových intervalech, čtených pomocí CPU nebo DMA.
 
-Pro koordinaci systému a pro připojení k nadřazeným obvodům systému je často integrována sběrnice typu FlexRay™.
+Pro koordinaci systému a pro připojení k nadřazeným obvodům systému je často integrována sběrnice typu FlexRay.
 Pro modul FlexRay je důležité, aby podporoval čtení dat bez interakce CPU, podobně jako pracuje DMA, o což se stará jednotka FlexRay Transfer Unit (FTU).
 Kromě zmíněného umožňuje připojení k SPI či LIN/SCI modulu.
 
 \secc Bezpečnost mikrokontroléru
 
-Rodina obvodů TMS570LS na jediném čipu kombinuje dvě shodná jádra typu Cortex™ R4F CPU, se shodným programem při použití funkce "lock-step".
+Rodina obvodů TMS570LS na jediném čipu kombinuje dvě shodná jádra typu CORTEX--R4, se shodným programem při použití funkce "lock-step".
 Operace a výsledky obou výpočtů jsou v každém cyklu logiky CPU porovnávány s cílem identifikovat potenciálně problémová místa a adekvátně na ně reagovat.
-Obě procesorová jádra mají implementovány geometrické a časové rozdíly, sloužící ke společnému odhalení možných hardwarových chyb.
+Obě jádra CORTEX--R4 mají implementovány geometrické a časové rozdíly, sloužící ke společnému odhalení možných hardwarových chyb.
 Druhé jádro je uvedeno zrcadlově a při zpracovávání kódu využívá zpoždění v řádu několika cyklů.
 
-Výhodou synchronní architektury je především vysoké diagnostické pokrytí, neboť hardware, porovnávající práci obou procesorů, pracuje trvale v každém cyklu CPU.
-V případě detekce chyby je systém během několika cyklů procesoru schopen přejít do bezpečného chybového stavu.
-S ohledem k tomu je detekce chyb možná pouze na hardwaru, který je pro software transparentní, alespoň pokud jde o procesorové chyby.
+Výhodou synchronní architektury je především vysoké diagnostické pokrytí, neboť hardware, porovnávající práci obou jader, pracuje trvale v každém cyklu CPU.
+V případě detekce chyby je systém během několika cyklů hodin schopen přejít do stabilního stavu.
+S ohledem k tomu je detekce chyb možná pouze na hardwaru, který je pro software transparentní, alespoň pokud jde o hardwarové chyby.
 
-V mikrokontroléru je integrován modul ECC, který diagnostikuje jak chyby v programu, tak i datové paměti procesoru TMS570 a zajišťuje příslušné reakce.
+V mikrokontroléru je integrován modul ECC, který diagnostikuje jak chyby v programu, tak i datové paměti mikrokontroléru TMS570 a zajišťuje příslušné reakce.
 Tento modul umožňuje opravit chyby v jednom bitu a detekovat chyby ve dvou bitech datového slova.
 Není však schopen sledovat vnitřní adresovou sběrnici a hardwarový dekodér paměti.
 
@@ -57,7 +57,7 @@ Modul LBIST kontroluje jádro mikropočítače během inicializace.
 Naproti tomu modul PBIST umožňuje testování datové paměti (RAM) různými uživatelem volitelnými algoritmy.
 Uvedené integrované moduly BIST jsou určeny k nahrazení a zjednodušení odpovídajících softwarových testovacích procedur.
 
-Všechny periferní moduly, které mají integrovánu vlastní paměť (NHET, MibADC, FlexRay™, DCAN a MibSPI) využívají hardwarovou paritní logiku.
+Všechny periferní moduly, které mají integrovánu vlastní paměť (NHET, MibADC, FlexRay, DCAN a MibSPI) využívají hardwarovou paritní logiku.
 Avšak i tyto oblasti RAM mohou být otestovány s využitím modulu PBIST.
 
 Pro monitorování přístupu k určité oblasti přidělené paměti, nebo oblasti se zvláštními přístupovými právy, je možné využít jednotku ochrany paměti MPU (Memory Protection Unit).
@@ -81,7 +81,7 @@ Při používání komunikační periferie FlexRay, dovoluje modul časovače sy
 Při poruše na sběrnici dokáže modul časovače automaticky přejít na vnitřní čas mikrokontroléru tak, aby běh operačního systému zůstal zachován.
 
 Součástí periferie časovače je hlídací (watchdog) periferie.
-Úkolem této části mikrokontroléru je po prvním nastavení hlídat běh kódu a vynutit restart nebo chybu procesoru, pokud vykonávání hlídané smyčky kódu trvá delší nebo kratší dobu.
+Úkolem této části mikrokontroléru je po prvním nastavení hlídat běh kódu a vynutit restart mikrokontroléru, pokud vykonávání hlídané smyčky kódu trvá delší nebo kratší dobu.
 
 Tento modul je navržen tak, aby odpovídal požadavkům normy automobilového průmyslu OSEK.
 
@@ -141,10 +141,10 @@ Znázorněný adresový bit je velmi důležitý při usnadnění komunikace ví
 Kvůli snadnější obsluze přerušení byl firmou Texas Instruments do mikrokontroléru zakomponován modul řadiče vektorových přerušení (VIM).
 Periferie, které generují žádosti o přerušení, posílají zprávy do modulu VIM.
 Po jejich zpracování rozhodne modul, jestli je žádost oprávněná.
-Po kladném vyhodnocení modul VIM pošle znamení jádru mikrokontroléru (CORTEX-R4), aby bylo provedeno přerušení.
+Po kladném vyhodnocení modul VIM pošle znamení jádru mikrokontroléru (CORTEX--R4), aby bylo provedeno přerušení.
 Následně modul VIM pomáhá s jeho řízením čtyřmi rozlišnými způsoby.
 
-Nejstarší přístup pracuje tak, jak by to bylo běžné v jádře CORTEX-R4.
+Nejstarší přístup pracuje tak, jak by to bylo běžné v jádře CORTEX--R4.
 Řízení je předáno na adresu vektoru přerušení v tabulce výjimek jádra.
 Úkolem obslužné rutiny je přečíst registr IRQINDEX, kam modul VIM uložil index právě probíhajícího přerušení.
 Tento přístup je kompatibilní se staršími mikrokontroléry jako je TMS470.
@@ -157,7 +157,7 @@ Třetí automatický přístup lze použít pouze pro obyčejná přerušení (I
 Postup přerušení je analogický k předchozímu přístupu s jedinou výjimkou.
 Modul VIM požádá jádro, aby neprovádělo skok na obvyklou adresu v tabulce výjimek, ale aby rovnou předalo řízení na adresu, kterou on jádru podstrčí.
 Tak se skočí na adresu, která odpovídá obsluze přerušení vyplněné při inicializaci.
-Tato funkcionalita se zapíná v jádře CORTEX-R4 pomocí bitu VE v konfiguračním registru.
+Tato funkcionalita se zapíná v jádře CORTEX--R4 pomocí bitu VE v konfiguračním registru.
 Poslední přístup předpokládá využití programem řízených přerušení.
 Aplikace se spoléhá pouze na sebe a funkcionalitu vektorů spravovaných modulem VIM odmítá.
 V takovémto případě se od aplikace očekává, že kromě zrušení žádosti o přerušení v dané periferii (časovač), zruší aplikace ještě žádost o přerušení v modulu VIM.
@@ -186,13 +186,13 @@ MII (RMMI) dovoluje přenášet datagramy až rychlostí blížící se 100Mbit/
 
 \secc MAC
 
-Část MAC, která je součástí procesoru je mimo jiné v souladu s normou IEEE 802.3 – 2002 Ethernet MAC, s normou IEEE 1588-2008 standard for precision networked clock synchronization (přesná síťová synchronizace s hodinami) a s RMII specifikací z konsorcia RMII.
+Část MAC, která je součástí mikrokontroléru je mimo jiné v souladu s normou IEEE 802.3 – 2002 Ethernet MAC, s normou IEEE 1588-2008 standard for precision networked clock synchronization (přesná síťová synchronizace s hodinami) a s RMII specifikací z konsorcia RMII.
 
 MAC podporuje 10/100Mbit/s přenosovou rychlost, podle normy IEEE 802.3 obsahuje kompatibilní rozhraní MII pro komunikaci s externím FAST ETHERNET PHY, podporuje jak full-duplex, tak half duplex provoz včetně CSMA/CD protokolu v half-duplex provozu, podporuje IEEE802.3x řízení toku pro full-duplex provoz.
 
-U procesoru TMS570LS3137 je MAC řešen třemi základními moduly a to kontrolním modulem (EMAC kontrol module), EMAC modulem (EMAC module) a MDIO modulem (MDIO module).
+U mikrokontroléru TMS570LS3137 je MAC řešen třemi základními moduly a to kontrolním modulem (EMAC kontrol module), EMAC modulem (EMAC module) a MDIO modulem (MDIO module).
 
-Jak je patrno z obrázku \ref[eth2], je řídící modul hlavním rozhraním mezi EMAC modulem, který poskytuje rozhraní mezi jádrem procesoru a sítí a MDIO modulem, který zajišťuje řízení PHY.
+Jak je patrno z obrázku \ref[eth2], je řídící modul hlavním rozhraním mezi EMAC modulem, který poskytuje rozhraní mezi jádrem mikrokontroléru, sítí a MDIO modulem, který zajišťuje řízení PHY.
 
 \medskip
 \clabel[eth2]{prvni superduper obrazek}
@@ -202,7 +202,8 @@ Jak je patrno z obrázku \ref[eth2], je řídící modul hlavním rozhraním mez
 
 Součástí kontrolního modulu je řízení přerušení a 8KB interní vyrovnávací paměť pro popisovače (descriptors)
 
-Obrázek \ref[eth2] dále zobrazuje rozhraní mezi EMAC řídícím modulem a procesorem (CPU).Spojení DMA sběrnice s EMAC řídícím modulem umožňuje čtení a zápis do vnitřní i vnější paměti bez využití CPU.
+Obrázek \ref[eth2] dále zobrazuje rozhraní mezi EMAC řídícím modulem a mikrokontrolérem (CPU).
+Spojení DMA sběrnice s EMAC řídícím modulem umožňuje čtení a zápis do vnitřní i vnější paměti bez využití CPU.
 Přerušení z modulu EMAC a MDIO jsou spojeny do čtyř signálů a přivedeny do vektorového řízení přerušení (VIM – Vectored Interrupt Manager).
 
 Obrázek \ref[eth3] zobrazuje vlastní připojení EMAC modulu a MDIO modulu s PHY.
@@ -288,13 +289,13 @@ Standardní MII má malou sadu registrů od adresy 0h do adresy 7h
 
 \sec Vývojový kit TMS570
 
-Vývojový kit TMS570LS31 společnosti Texas Instrumens poskytuje hardwarovou platformu k ověření funkčnosti procesorů rodiny TMS570LS a je určen zejména k usnadnění vývoje zákaznického hardware a software a tím snížení doby uvedení na zákaznický trh.
+Vývojový kit TMS570LS31 společnosti Texas Instrumens poskytuje hardwarovou platformu k ověření funkčnosti mikrokontrolérů rodiny TMS570LS a je určen zejména k usnadnění vývoje zákaznického hardware a software a tím snížení doby uvedení na zákaznický trh.
 
 \secc  Popis kitu
 
 Podrobné informace k vývojovému kitu společnosti Texas Instrumens jsou dostupné v X a v X, včetně elektrického schématu a plošného spoje.
 
-Vývojový kit je založen na procesoru TMS570LS31.
+Vývojový kit je založen na mikrokontroléru TMS570LS31.
 Na obrázku \ref[eth11] je blokové schéma vývojového kitu. 
 
 \medskip

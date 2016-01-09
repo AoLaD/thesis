@@ -181,7 +181,7 @@ Kromě této funkcionality bývá zavaděč schopen komunikovat po vybrané komu
 	
 	Jádro CORTEX-R podporuje dvě možné umístění tabulek výjimek.
 Jedna z tabulek se nachází na počátku adresového prostoru a proto se mikrokontrolér po startu či resetu ocitne na adrese 0.
-Druhá možnost jádra CORTEX-R4 je používat tabulku výjimek z adresy 0xFFFF0000.
+Druhá možnost jádra CORTEX--R4 je používat tabulku výjimek z adresy 0xFFFF0000.
 Používat druhou tabulku výjimek na adrese 0xFFFF0000 je bohužel v mikrokontroléru TMS570 nemožné, protože adresa 0xFFFF0000 je rezervovaná pro periferie a není možné z ní vykonávat kód.
 Toto je velmi důležité, protože operační systém RTEMS dokáže zpracovat všechny výjimky z tabulky výjimek a je vhodné, aby to také prováděl.
 Avšak protože je nutné kód zavaděče vykonat jako první, nachází se zavaděč pravděpodobně v prostorech okolo tabulky výjimek a tabulka výjimek odkazuje na zavaděč.
@@ -283,13 +283,13 @@ Taktéž by podpora této periferie byla nutná pro případný start operační
 Vektorový modul přerušení (VIM) je zásadní pro asynchronní obsluhu vnějších událostí.
 Modul VIM rozhoduje o prioritě jednotlivých přerušení, informuje o posledním přerušení a řídí možnosti probuzení po události.
 
-Z teorie je zřejmé, že jádro mikrokontroléru CORTEX-R4 podporuje práci s přerušeními.
+Z teorie je zřejmé, že jádro mikrokontroléru CORTEX--R4 podporuje práci s přerušeními.
 CORTEX-4R rozděluje přerušení na rychlé (FIQ) a nornální (IRQ).
 Pro obě přerušení je rezervována speciální adresa, na které mikrokontrolér začne vykonávat rutinu přerušení.
-Nicméně, kromě zmíněného systému podporuje jádro CORTEX-R4 i možnost delegování kontroly nad přerušeními jinému modulu (VIM) v mikrokontroléru.
+Nicméně, kromě zmíněného systému podporuje jádro CORTEX--R4 i možnost delegování kontroly nad přerušeními jinému modulu (VIM) v mikrokontroléru.
 
-Pokud je v jádře CORTEX-R4 zapnuto přímé přesměrování přerušeních do modulu VIM (v registru CPSR), modul sám určí, které přerušení nastalo.
-Přerušení je automaticky vyhodnoceno a vykonávání programu se přesune na příslušnou oblužnou rutinu vyplněnou v tabulce přerušení bez skoku na stadrarní obsluhy přerušení IRQ a FIQ v tabulce výjimek jádra CORTEX-R4.
+Pokud je v jádře CORTEX--R4 zapnuto přímé přesměrování přerušeních do modulu VIM (v registru CPSR), modul sám určí, které přerušení nastalo.
+Přerušení je automaticky vyhodnoceno a vykonávání programu se přesune na příslušnou oblužnou rutinu vyplněnou v tabulce přerušení bez skoku na stadrarní obsluhy přerušení IRQ a FIQ v tabulce výjimek jádra CORTEX--R4.
 
 Přidání podpory přerušení do operačního systému se tedy musí řešit pro oba případy, s podporou řízení v modulu VIM i bez podpory.
 
@@ -297,7 +297,7 @@ Bez podpory modulu VIM je přizpůsobení operačnímu systému RTEMS velmi snad
 Operační systém je navržen tak, aby všechna přerušení procházela přes jeho jádro.
 Tímto postupem dokáže jádro RTEMS softwarově určovat a nastavovat hodnotu priority přerušení.
 Taktéž tento postup dává plánovači znatelně větší kontrolu nad plánováním vykonávaného kódu.
-Připojení se provede zapsáním instrukce skoku na funkci \_ARMV4\_Exception\_interrupt do tabulky výjimek jádra CORTEX-R4 (adresa 24 - IRQ a 28 - FIQ).
+Připojení se provede zapsáním instrukce skoku na funkci \_ARMV4\_Exception\_interrupt do tabulky výjimek jádra CORTEX--R4 (adresa 24 - IRQ a 28 - FIQ).
 
 Při zapnutí aktivního řízení přerušení z modulu VIM a aktivní událostí přerušení přejde mikrokontroler přímo na adresy vyplněné ve vektorové tabulce modulu VIM.
 Toto řešení je vhodno pro co nejrychlejší obsluhu přerušení bez zbytečné zátěže, ale má nevýhodu, že nebudou provedené případné požadavky na přeplánování vzniklé během obsluhy přerušení.
