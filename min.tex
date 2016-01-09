@@ -25,30 +25,31 @@ Prohlašuji, že jsem předloženou práci vypracoval samostatně a že jsem uve
 \makefront
 \chap Úvod
 
-Tato diplomová práce si klade za cíl navrhnout, implementovat a začlenit podporu mikrokontroleru TMS570 od firmy Texas Instruments do otevřeného projektu operačního systému RTEMS.
+Tato diplomová práce si klade za cíl navrhnout, implementovat a začlenit podporu mikrokontroleru TMS570 od firmy Texas Instruments do operačního systému RTEMS.
 
 Do operačnímu systému je potřeba začlenit podporu obsluhy základních periferii.
 Pro zprovoznění operačního systému RTEMS na nové hardwarové platformě je minimálně nutná implementace periferie časovače a obsluha sériových portů.
 Aby mohl být výsledný naimplementovaný ovladač použit a začleněn do hlavního vývojového stromu projektu RTEMS, musí ovladač odpovídat požadavkům projektu na čitelnost a formátování vyžadovaného komunitou.
-Zvýšení uplatnitelnosti nového ovladače je taktéž potřeba provést přiložením definičních hlavičkových souborů ke všem periferiím mikrokontroléru TMS570.
-Pro začlenění hlavičkových souborů popisující periferie a jádro mikrokontroléru TMS570 je nutné, aby hlavičkové soubory odpovídaly projektu RTEMS jak licencí, tak formou.
-Dalším úkolem je vytvoření podpory síťového rozhraní ETHERNET pro mikrokontrolér TMS570 a operačním systémem RTEMS.
-V neposlední řadě je důležité výsledný implementovaný kód otestovat na vývojovém kitu TMS570LS31xHDK a důsledně popsat.
+{\bf Zvýšení uplatnitelnosti nového ovladače } je taktéž potřeba provést přiložením definičních hlavičkových souborů ke všem periferiím mikrokontroléru TMS570.
+Pro začlenění hlavičkových souborů popisujících periferie a jádro mikrokontroléru TMS570 je nutné, aby hlavičkové soubory odpovídaly zvyklostem projektu RTEMS jak licencí, tak formou.
+Dalším úkolem je vytvoření podpory síťového rozhraní ETHERNET pro mikrokontrolér TMS570 s operačním systémem RTEMS.
+V neposlední řadě je důležité výsledný implementovaný kód otestovat na vývojovém kitu TMS570LS31xHDK a důsledně zdokumentovat.
 
 \medskip
 
-Zadaný mikrokontrolér TMS570 od firmy Texas Instruments patří do skupiny bezpečnostních mikrokontrolérů Hercules.
-Mikrokontrolér je navržen aby splňoval bezpečnostní normy ISO 26262 ASIL D a IEC 61508 SIL 3.
+Mikrokontrolér TMS570 od firmy Texas Instruments patří do skupiny bezpečnostních mikrokontrolérů Hercules.
+Mikrokontrolér byl vyvinut, aby splňoval bezpečnostní normy ISO 26262 ASIL D a IEC 61508 SIL 3.
 Proto je mikrokontrolér TMS570 doporučen pro použití v automobilovém, železničním a leteckém průmyslu.
 Hlavní motivací této diplomové práce je snížit čas potřebný k tvorbě nové aplikace a zároveň rozšířit aplikační spektrum mikrokontroléru.
-Dosažení zmíněného cíle je předpokládáno rozšířením operačního systému RTEMS o ovladač pro mikrokontrolér TMS570.
+Dosažení zmíněného cíle je předpokládáno rozšířením operačního systému RTEMS o ovladače a podpůrný kód (BSP) pro mikrokontrolér TMS570.
 Operační systém RTEMS byl zvolen z důvodu jeho vhodnosti pro použití v bezpečnostně kritických aplikacích jako je vesmírný a medicínský průmysl.
 
-Práce mi může pomoci získat nové znalosti z prostředí periferií firmy Texas Instruments.
+Téma práce pro mne zaujalo proto, že mi nabídlo možnost získat nové znalosti z prostředí obsluhy periferií firmy Texas Instruments.
 Dále pak jako seznámení a vyzkoušení schvalovacího modelu otevřených projektů.
 
-Text této diplomové práce by měl sloužit jako dokumentace nových a experimentálních způsobů řešení problémů.
-Stejně tak by měl sloužit ostatním vývojářům k replikování a dokumentaci mé práce, seznámení s mikrokontrolérem TMS570 či jako návod, jak přidat podporu pro nový mikrokontrolér do operačního systému RTEMS, jak napsat ovladač do knihovny LWIP a jakých věcí se při jeho tvorbě vyvarovat.   
+Text této diplomové práce by měl sloužit ostatním vývojářům k replikování a dokumentaci mé práce.
+Taktéž se může použít pro základní seznámení s mikrokontrolérem TMS570.
+A v neposlední řadě zde může vývojář naleznout návod, jak přidat podporu pro nový mikrokontrolér do operačního systému RTEMS nebo jak napsat ovladač do knihovny LWIP a jakých věcí se při jeho tvorbě vyvarovat.   
 
 \medskip
 
