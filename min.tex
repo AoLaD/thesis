@@ -337,7 +337,7 @@ Přerušení od jednotlivých periferii v microkontroléru TMS570 vždy vedou p�
 
 \sec ETHERNET
 
-	Výběr sítové komunikační knihovny byl konzultován s RTEMS komunitou.
+	Výběr sítové komunikační knihovny byl konzultován s komunitou vývojářů systému RTEMS.
 Do hlavního výběru byla uvažována vnitřní knihovna RTEMSu, knihovna BSD a knihovna LWIP.
 Komunita RTEMS před časem vložila velké úsilí do vlastního knihovny, která je přímo zavedena v jádře operačního systému.
 Bohužel se ukázalo, že udržování takhle komplikované knihovny je nad komunitní síly, proto je nyní tendence podporovat ostatní komunikační knihovny od třetích stran.
@@ -352,36 +352,36 @@ Přizpůsobení hardwarové platformě, přizpůsobení operačnímu systému a 
 Přizpůsobení operačnímu systému je nejjednoduší část.
 Knihovna LWIP vnitřně pracuje s obvyklými nástroji operačních systémů jako jsou vlákna, semafory, fronty a podobné.
 V případě, že tato část nebude implementována, LWIP použije vlastní implementaci dříve zmíněných softwarových konstruktů.
-Tato implementace bude sice funkční, ale nemnoho efektivní.
+Tato implementace bude sice funkční, ale neefektivní nebo založená na režimu opakovaného dotazování.
 
-Při vkládání podpory operačního systému je důležitá dvojice souborů sys\_arch.c a sys\_arch.h.
-V hlavičkovém souboru je potřeba provést redefinici vnitřních LWIP konstruktů na RTEMSové.
-Jedná se o již zmíněné fronty, mutexy, semafory a vlákna.
+Při vkládání podpory operačního systému je důležitá dvojice souborů sys\_arch.c a sys\_arch.h.{}
+Zde je vhodné naimplementovat synchronizační a další systémové funkce vyžadované knihovnou LwIP s využitím mechanizmů a služeb podporovaných cílovým operačním systémem a hardwarovou platformou.
+V tomto případě s využitím semaforů, mutexů a front systému RTEMS.
 Z důvodu rozdílného zacházení s těmito strukturami nebylo vhodné provádět redefinici jedna ku jedné.
-RTEMS při předávání zmíněných konstruktů nepoužívá přímý odkaz na konstrukt, ale používá vnitřní index.
+RTEMS při předávání zmíněných konstruktů nepoužívá přímý odkaz na konstrukt, ale používá vnitřní identifikátor.
 Z hlediska bezpečnosti je přístup operačního systému RTEMS znatelně lepší, protože uživatelské aplikaci nedává možnost pracovat se zmíněnými konstrukty operačního systému bez volání vyexportovaných systémových funkcí.
 Pro párování konstruktů operačního systému RTEMS s konstrukty LWIP byly potřeba vytvořit příslušné struktury (např. port\_mutex\_t).
 
-Nestandardně byla do hlavičkového souboru přidána funkce pro práci s datovými bariérami.
+Navíc proti požadavkům LwIP byla do hlavičkového souboru přidána funkce pro práci s datovými bariérami.
 Této funkce bude zapotřebí při dalším přizpůsobování v případech, kdy mohou vznikat datové hazardy.
-Dále by se měly do souboru umístit funkce pro označování a práci s kritickými oblastmi.
-Obecně se kritické oblasti vyznačují tím, že do nich nesmí vstoupit dvě vlákna najednou.
-Při použití se může jednat o oprávněné důvody (práce s nedělitelným hardwarem) nebo například o lenost programátora řešit datovou synchronizaci mezi vlákny.
+Dále by se měly do souboru umístit funkce pro označování a práci s kritickými sekcemi.
+Obecně se kritické sekce vyznačují tím, že do nich nesmí vstoupit dvě vlákna najednou.
+Při použití se může například jednat o práci s nedělitelným hardwarem nebo o konzistenci datových struktur.
 Jednoduchou implementací kritických oblastí je zakázání přerušení a tím i přeplánování běhu vláken.
 
-Implementace dříve zmíněných funkcí a funkcí pro práci s konstrukty operačního systému patří do souboru sys\_arch.c.
+Implementace dříve zmíněných funkcí a funkcí pro práci s konstrukty operačního systému je implementována v souboru sys\_arch.c.
 Protože kód bude součástí veřejného projektu či různých aplikací, je vhodné dbát na úpravu kódu, kontrolovat návratové hodnoty z funkcí a držet se zásad psaní čistého kódu.
-Ve většině případů si aplikační rozhraní knihovny LWIP a rozhraní operačního systému RTEMS odpovídala a proto je ve funkcích pouze přepis z jednoho aplikační rozhraní do druhého.
+Ve většině případů si aplikační rozhraní knihovny LWIP a rozhraní operačního systému RTEMS odpovídala a proto je ve funkcích pouze převod volání z jednoho aplikační rozhraní do druhého.
 Vyjímku tvoří funkce čekání na semafor a frontu.
 V operačním systému RTEMS se nepracuje s časem, který funkce strávila čekáním na uvolnění nebo data.
 Proto tato funkčnost musela být implementována pomocí funkce rtems\_clock\_get\_uptime\_nanoseconds.
 Poslední odlišností je žádost knihovny LWIP čekat při vkládání do fronty do doby, než bude ve frontě místo.
 Tato funkcionalita je realizována pomocí přidaného čítacího semaforu, který znázorňuje volné místo ve frontě.
 
-Naposledy je ještě vhodné zmínit existenci souboru cc.h, který obsahuje definice datových typů použitých uvnitř knihovny LWIP.
+Naposledy je ještě vhodné zmínit existenci souboru cc.h, který obsahuje definice datových typů podle použitého kompilátoru a C knihovny.
 Tento soubor je dále důležitý pro definování návratových hodnot z funkcí knihovny LWIP.
-Pro účely této práce byly návratové hodnoty použity z operačního systému, tak aby nedocházelo ke kolizím ve jménech.
-Tohoto bylo dosáhnuto pomocí definice LWIP\_PROVIDE\_ERRNO.
+Pro účely této práce byly standarní chybové kódy použity z operačního systému, tak aby nedocházelo ke kolizím ve jménech.
+Tohoto bylo dosaženo pomocí definice LWIP\_PROVIDE\_ERRNO.
 Definice návratových hodnot jsou v RTEMSu v souboru sys/errno.h.
 Dále jsou v souboru cc.h definice potřebné pro kompilátor.
 
@@ -401,10 +401,12 @@ EMAC obsahuje osm vstupních a osm výstupních kanálů.
 K implementaci základní komunikační funkcionality byl vybrán pár kanálů na pozici nula.
 Veškerá komunikace tedy prochází touto dvojicí kanálů, je zpracovávana periferií EMAC a předána do knihovny lwip.
 
-Funkce potřebné k nastavení periferie jsou umístěny v souborech ti\_drv\_emac.h a ti\_drv\_emac.h a jejich příslušných zdrojových souborech.
-V základě se jedná o přepsání knihoven firmy Texas Instruments na nové definiční hlavičkové soubory mikrokontroleru.
+Funkce potřebné pro nastavování registrů periferie jsou umístěny v souborech ti\_drv\_emac.h a ti\_drv\_emac.h a jejich příslušných zdrojových souborech.
+Tyto krátké fukce jsou převzaté z kódu generovaného nástrojem HalCoGen od firmy Texas Instruments.
+Současná verze sloučení s projektem RTEMS licenčně již umožňuje.
+Nicméně jsou tyto funkce celkově přepsané, aby odpovídaly novým definičním hlavičkovým souborům mikrokontroleru.
 
-Inicializace obsahuje nastavení promiskuitního režimu, určení výchozího kanálu pro příjem všesměrových zpráv, povolení přerušení pro daný kanál, výběr mezi jednocestnou a oboucestnou komunikací a nakonec povolení přerušení na periferii EMAC.
+Inicializace obsahuje možnost nastavení promiskuitního režimu, určení výchozího kanálu pro příjem všesměrových zpráv, povolení přerušení pro daný kanál, výběr mezi jednocestnou a oboucestnou komunikací a nakonec povolení přerušení na periferii EMAC.
 Po tomto nastavení je periferie EMAC připravena k použití a při vyplnění adresy prázdného a připraveného spojitého seznamu do registru RX\_HDP začne periferie EMAC zapisovat přijatá data.
 
 \secc Přizpůsobení LWIP knihovně
@@ -443,7 +445,7 @@ Výhoda i nevýhoda tohoto přístupu je patrná při použití více komunikač
 V případě, kdy jeden komunikační kanál bude výrazněji vytěžován, může nastat kritická situace a struktury dojdou.
 Výhodou je, že každý kanál má předem rezervovaný počet struktur a nemůže se stát, že jeden kanál si během vytížení přivlastní všechny dostupné struktury ostatních kanálů.
 Druhý přístup se od prvního liší tím, že nepoužívá předem daný počet struktur na komunikační kanál a fronta volných struktur je společná pro všechny.
-Trošku odlišný způsob vnítřní reprezentace zmiňovaných zřetězených struktur tkví v udržování zřetězeného zacykleného seznamu všech struktur.
+Poněkud odlišný způsob vnítřní reprezentace zmiňovaných zřetězených struktur tkví v udržování zřetězeného zacykleného seznamu všech struktur.
 V něm si udržujeme odkaz na první připravenou a první volnou strukturu.
 Protože je potřeba udržovat o několik odkazů méně, je tento způsob méně pamětově náročný.
 Avšak klade mnohonásobně větší nároky na strojový čas, protože je neustále potřeba udržovat konzistenci a smyslupnost zmíněného cyklického seznamu.
@@ -455,19 +457,19 @@ Jediná výjimka je, že obslužný kód běží na úkor knihovny lwip a ne vla
 Systém předávání interních dat v ovladači a parametrů mezi ovladačem a knihovnou LWIP je realizován pomocí struktury netif.
 Tato struktura je v kompetenci knihovny LWIP a ze zásad objektového přístupu není vhodné ji měnit jinak, než přes vyexportované nastavující funkce.
 To však neplatí pro její položku state, kam se při inicializaci ovladače může nahrát vnitřní struktura tms570\_netif\_state.
-Tato struktura obsahuje již zmíněnou reprezentaci zřetězených seznamů struktur emac\_tx\_bd a další interní informace jako jsou odkazy na periferie EMAC a MDIO.
+Tato struktura obsahuje záhlaví již zmíněhých zřetězených seznamů struktur emac\_tx\_bd a další interní informace jako jsou odkazy na periferie EMAC a MDIO.
 Smyslem takovéto práce s daty je pokus o udržování objektového přístupu, v tomto případě se jedná o větší kontrolu nad strukturou předávaných dat.
-Nutností by to bylo až v případě, že by se do knihovny přidával další ovladač.
+%Nutností by to bylo až v případě, že by se do knihovny přidával další ovladač.
 
 Kontrola nad alokací struktur pbuf je kompletně v režii knihovny LWIP.
 Vzhledem k faktu, že struktury pbuf se používají po celé knihovně LWIP a že jedna a tatáž instance struktury je předávána mezi mnoha vrstvami knihovny či vlákny operačního systému, je struktura pbuf sdílená datová oblast a je potřeba k ní přistupovat jako ke kritické.
-Při správném přizpůsobení operačnímu systému a vhodném nastavení knihovny LWIP je uvolňování a alokování struktury pbuf považováno za bezpečné.
+Při správném přizpůsobení operačnímu systému a vhodném nastavení knihovny LWIP je uvolňování a alokování struktury pbuf považováno za bezpečné i z jiného vlákna nebo dokonce kontextu přerušení.
 Avšak stále je potřeba dbát na správné uvolňování již použitých pbuf struktur po odesílání paketu.
 Stejně tak kritické je správně uvolňovat pamět po špatné alokaci struktury pbuf.
 Velký pozor by měl být věnován i místu odkud se pbuf\_alloc volá.
 Knihovna LWIP obsahuje možnost při uvolnění místa v paměti pro struktury pbuf zavolat uživatelskou funkci (např. tms570\_eth\_memp\_avaible).{}
- Pokud by tato zpětná funkce volala přímo pbuf\_alloc, může snadno dojít k rekurzivnímu zacyklení, protože zpětná funkce může být volána i z vnitřku špatně použitého pbuf\_alloc.
-Z tohoto důvodu není v této práci zpětné funkci přiřazena moc velká důležitost.
+Pokud by tato zpětná funkce volala přímo pbuf\_alloc, může snadno dojít k rekurzivnímu zacyklení, protože zpětná funkce může být volána i z vnitřku špatně použitého pbuf\_alloc.
+Z tohoto důvodu není v této práci zpětné funkci přiřazena vysoká priorita.
 Jediná možnost, jak si být jistý korektností použití pbuf\_alloc, je počítání místa, které je ještě volné k alokaci.
 
 \chap Závěr
