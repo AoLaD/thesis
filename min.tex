@@ -60,9 +60,7 @@ V teoretické části lze naleznout popis funkcionality použitého mikrokontrol
 Druhá část teorie obsahuje základní vymezení pojmů operačního systému, projektu RTEMS, hlavičkových souborů a ethernetu společně s knihovnou LwIP.
 
 Realizace je logicky rozdělená podle posloupnosti operací při vývoji.
-Můžeme zde naleznout návod, jak připravit hlavičkové soubory k mikrokontroléru.
-Dále pak jak se implementuje základní funkcionalita nového mikrokontroléru v projektu RTEMS.
-A naposledy je zde podrobný popis vývoje nového ovladače do knihovny LwIP.
+Můžeme zde naleznout návod, jak připravit hlavičkové soubory k mikrokontroléru, postup implementace základní funkcionality nového mikrokontroléru v projektu RTEMS a popis vývoje nového ovladače do knihovny LwIP.
 Toto vše je zakončeno testováním výsledné realizace.
 
 Závěr poté už jen shrnuje výsledky diplomové práce.}
@@ -154,7 +152,7 @@ Druhá část je obecná a mohla by sloužit ke generování libovolných hlavi�
 Generátor je takto rozdělen kvůli úspoře času a i možnosti později upravit data v generované databázi.
 Hlavním důvodem rozdělení generovacího procesu na dvě části je obava o zbytečnou komplexitu generovacího algoritmu.
 V případě, kdy by generovací proces rozdělen nebyl, musel by být schopen zpracovat jakoukoli formu vstupních dat.
-To by mohlo vést k implementaci plné vyjímek a přepínačů, která by se postupně nabalovala při každém přizpůsobení novému mikrokontroléru.
+To by mohlo vést k implementaci plné výjimek a přepínačů, která by se postupně nabalovala při každém přizpůsobení novému mikrokontroléru.
 Proto byl vytvořen datový standard, který je generovací část algoritmu schopna převést do hlavičkového souboru.
 Tento standardní formát se snaží vytvořit první čistící část generátoru.
 %	OBRAZEK postup prevodu
@@ -197,24 +195,24 @@ Jedná se například o zkontrolování integrity paměti ale i o možné předp
 O paměťový prostor mikrokontroléru se tedy většinou dělí dva nezávislé programy.
 Typicky se jedná o low\_lv\_init a aplikaci, do které je v tomto případě připojen i operační systém RTEMS.
 Základním nedostatkem tohoto modelu je neschopnost sám sebe upravit nebo přeprogramovat.
-V praxtických aplikacích je často požadavek, aby se do mikrokontroléru dala nahrát aktualizace stávající aplikace.
+V praktických aplikacích je často požadavek, aby se do mikrokontroléru dala nahrát aktualizace stávající aplikace.
 Ideálním případem je nahrání kódu bez použití externího debugeru, protože zařízení již může být připojeno na nedostupném místě v jiném komplexním systému.
 
 	Z těchto důvodů je obvyklejší aplikační model zavaděč a aplikace.
 Zavaděč je nahrán na adresu nula a obsahuje základní funkcionalitu potřebnou k rozběhnutí mikrokontroléru (low\_lv\_init).
-Kromě této funkcionality býva zavaděč schopen komunikovat po vybrané komunikační sběrnici, po které dokáže přijímat příkazy nebo aktualizace kódu.
+Kromě této funkcionality bývá zavaděč schopen komunikovat po vybrané komunikační sběrnici, po které dokáže přijímat příkazy nebo aktualizace kódu.
 	
-	Jádro CORTEX-R podporuje dvě možné umístění tabulek vyjímek.
+	Jádro CORTEX-R podporuje dvě možné umístění tabulek výjimek.
 Jedna z tabulek se nachází na počátku adresového prostoru a proto se mikrokontrolér po startu či resetu ocitne na adrese 0.
-Druhá možnost jádra CORTEX-R4 je používat tabulku vyjímek z adresy 0xFFFF0000.
-Používat druhou tabulku vyjímek na adrese 0xFFFF0000 je bohužel v mikrokontroléru TMS570 nemožné, protože adresa 0xFFFF0000 je rezervovaná pro periferie a není možné z ní vykonávat kód.
-Toto je velmi důležité, protože operační systém RTEMS dokáže zpracovat všechny vyjímky z tabulky vyjímek a je vhodné, aby to také prováděl.
-Avšak protože je nutné kód zavaděče vykonat jako první, nachází se zavaděč pravděpodobně v prostorech okolo tabulky vyjímek a tabulka vyjímek odkazuje na zavaděč.
+Druhá možnost jádra CORTEX-R4 je používat tabulku výjimek z adresy 0xFFFF0000.
+Používat druhou tabulku výjimek na adrese 0xFFFF0000 je bohužel v mikrokontroléru TMS570 nemožné, protože adresa 0xFFFF0000 je rezervovaná pro periferie a není možné z ní vykonávat kód.
+Toto je velmi důležité, protože operační systém RTEMS dokáže zpracovat všechny výjimky z tabulky výjimek a je vhodné, aby to také prováděl.
+Avšak protože je nutné kód zavaděče vykonat jako první, nachází se zavaděč pravděpodobně v prostorech okolo tabulky výjimek a tabulka výjimek odkazuje na zavaděč.
 
-	Měnit obsah tabulky vyjímek je značně komplikované a protože se tabulka nachází v paměti typu flash, je počet zápisů do paměti omezen.
-Jednoduchým řešením tohoto problému je rozšířit zavaděč tak, aby skoky z tabulky vyjímek přeposílal do aplikace.
-Nevýhodou tohoto řešení je i několika skokové zpoždění reakční doby na přerušení nebo jinou vyjímku.
-Na mikrokontroléru TMS570 jde tento problém vyřešit pomocí periferie POM, která může tabulku vyjímek překrýt virtuální stránkou paměti a tím tabulku přesměrovat bez nutnosti přepisovat flash paměť. 
+	Měnit obsah tabulky výjimek je značně komplikované a to z toho důvodu, že se tabulka nachází v paměti typu flash. Počet zápisů do paměti typu flash je omezen.
+Jednoduchým řešením tohoto problému je rozšířit zavaděč tak, aby skoky z tabulky výjimek přeposílal do aplikace.
+Nevýhodou tohoto řešení je i několika skokové zpoždění reakční doby na přerušení nebo jinou výjimku.
+Na mikrokontroléru TMS570 jde tento problém vyřešit pomocí periferie POM, která může tabulku výjimek překrýt virtuální stránkou paměti a tím tabulku přesměrovat bez nutnosti přepisovat flash paměť. 
 	 
 
 \sec Návrh a začlenění TMS570 do RTEMS
@@ -226,27 +224,27 @@ Na mikrokontroléru TMS570 jde tento problém vyřešit pomocí periferie POM, k
 \secc        Sériové porty
 
 Prvním krokem při přidávání podpory nové platformy, portaci operačního systému nebo testování nového programovacího jazyka obvykle bývá počáteční test typu Ahoj světe.
-Jedním z nejjednodušších možností, jak z programu uvnitř mikrokontroléru TMS570 pozdravit okolní svět, je pomocí periferie SCI (sériového komunikačního rozhraní).
+Jedním z nejjednodušších možností, jak z programu uvnitř mikrokontroléru TMS570 pozdravit okolní svět, je řešení pomocí periferie SCI (sériového komunikačního rozhraní).
 
 Základní způsob komunikace s SCI periferii je velmi jednoduchý.
 Stačí na příslušné místo v paměti, registr TD (pošli data) v periferii SCI, zapsat písmeno, které se odešle na sběrnici.
-Dále je pak před každým dalším zápisem nutno kontrolovat příznak, jestli se je v periferii místo na zapsání dalšího znaku.
+Dále je pak před každým dalším zápisem nutno kontrolovat příznak, jestli je v periferii místo na zapsání dalšího znaku.
 Příznaky přenosu můžeme naleznout v registru FLR v periferii SCI.
 V tomto případě stačí kontrolovat příznak TX EMPTY (prázdný výstupní buffer).
 
-Po restartu mikrokontroléru jsou parametry komunikace nastaveny na použití jednoho stopbitu, bez použití parity s délkou přenášených dat 1 bit.
-Toto nastavení nemusí odpovídat aplikací požadovanému nastavení a proto je potřeba přidat podporu mechanizmu, kterým si aplikace může zažádat o nastavené požadovaných parametrů.
+Po restartu mikrokontroléru jsou parametry sériové komunikace nastaveny na použití jednoho stopbitu a bez použití parity a s délkou přenášených dat 1 bit.
+Toto nastavení nemusí odpovídat v aplikací požadovanému nastavení a proto je potřeba přidat podporu mechanizmu, kterým si aplikace může zažádat o nastavení požadovaných parametrů.
 Počet stopbitů a paritu najdeme v registru GCR1.
 Délku přenášených a očekávaných dat můžeme hledat v registru FORMAT a nastavení rychlosti v registru BRS.
 Dále je ještě důležité nastavení přerušení v registru SETINT.
 
 Po zvládnutí práce s periferií nastává čas pro integraci její podpory do operačním systému RTEMS.
 V případě, že v konfiguraci aplikace je nastaven příznak informující o potřebě použití konzole, operační systém RTEMS při inicializaci volá funkci console\_initialize.
-V této funkci je potřeba inicializovat termios a zaregistrovat ty sériové porty, které zařízení podporuje.
+V této funkci je potřeba inicializovat termios a zaregistrovat sériové porty, které zařízení podporuje.
 V tomto případě se jedná o periferii SCI a periferii LIN, která taktéž dokáže komunikovat po sériové lince.
 Registrace se provádí funcí rtems\_termios\_device\_install.
 Funkce má dva důležité vstupy.
-Odkaz na strukturu registrovaného portu, kterou bude operační systém předávat dále, a tabulku funkcí, které operační systém bude volat.
+Odkaz na strukturu registrovaného portu, kterou bude operační systém předávat dále a tabulku funkcí, které operační systém bude volat.
 Tyto funkce je potřeba implementovat.
 Jedná se především o funkce inicializace a deinicializace při prvním respektive posledním použití, čtení znaku, poslání znaku a nastavení parametrů přenosu.
 Pro potřeby této diplomové práce byly tyto funkce ještě rozvětveny na případy, kdy se pro tok dat využívá přerušení a kdy ne.
@@ -261,7 +259,7 @@ Pro kompletní funkčnost ovladače je přidána podpora funkce printk.
 Toho je obvykle funkce, kterou používá jádro operačních systémů pro tisknutí ladících informací, chyb a podobných kritických dat.
 Funkce printk by neměla používat přerušení, protože může být potřeba v době, kdy přerušovací subsystém není ještě konfigurovaný.
 Mezi další použití funkce printk patří ladění uvnitř přerušení nebo v kritickém stavu operačního jádra.
-Podpora funkce printk je přidána do druhého souboru a oddělena od ovladače seriových portů.
+Podpora funkce printk je přidána do druhého souboru a oddělena od ovladače sériových portů.
 Do jádra systému RTEMS se vkládá pomocí definice BSP\_output\_char.
 
 \secc        Časovač
@@ -291,31 +289,30 @@ Jako poslední se nastaví povolení přerušení v registru SETINTENA.
 
 \secc    Pinmux
 
-Periferie Pinmux slouží jako prostředník mezi téměř všechny periferiemi mikrokontroleru a výstupními piny.
+Periferie Pinmux slouží jako prostředník mezi téměř všemi periferiemi mikrokontroleru a výstupními piny.
 V dnešní době je počet vstupně výstupních pinů mikrokontrolérů důležitý parametr.
 Počet pinů je většinou spjatý s počtem zařízení, které bude mikrokontroler schopen obsluhovat či kontrolovat.
 Bohužel pouzdro PQFP s fyzickými piny pro mikrokontrolér je jedna z podstatných složek ceny mikrokontroléru.
 Naproti tomu pouzdra BGA většinou vyžadují vícevrstvé tištěné spoje a tím efektivně prodražují návrh a cenu desky.
 Z tohoto důvodu se firmy snaží naleznout kompromis mezi počtem pinů mikrokontroléru a zároveň udržení co nejvyšší použitelnosti mikrokontroléru.
-Pro účely zvýšení efektivity a vytíženosti pinů byla vytvořena transformační síť, která dovoluje výhradní kontrolu nad pinem přiřadit jedné z několika spjatých periferí.
+Pro účely zvýšení efektivity a vytíženosti pinů byla vytvořena transformační síť, která dovoluje výhradní kontrolu nad pinem a jeho přiřazení několika spjatým periferíjím.
 Periferie pinmux ovládá tuto síť.
 
 V souboru pinmux.c je umístěna implementace obsluhy této periferie.
 Prozatím není provázána s jádrem operačního systému, ale protože pro vývojáře může mít tato periferie kritickou důležitost, jsou funkce obsluhující tuto periferii vyexportovány a připraveny k použití.
 Taktéž by podpora této periferie byla nutná pro případný start operačního systému RTEMS jako primárního kódu přímo přes reset vektor bez použití zavaděče.
-
 \secc	VIM
 
-Vektorový modul přerušení (VIM) je zásadní pro pro asynchronní obsluhu vnějších událostí.
-Modul VIM rozhoduje prioritu jednotlivých přerušení, informuje o posledním přerušení a řídí možnosti probuzení po události.
+Vektorový modul přerušení (VIM) je zásadní pro asynchronní obsluhu vnějších událostí.
+Modul VIM rozhoduje o prioritě jednotlivých přerušení, informuje o posledním přerušení a řídí možnosti probuzení po události.
 
 Z teorie je zřejmé, že jádro mikrokontroléru CORTEX-R4 podporuje práci s přerušeními.
-CORTEX-4R přerušení rozděluje na rychlé (FIQ) a nornální (IRQ).
-Pro obě přerušení je rezervována speciální adresa na které mikrokontrolér začne vykonávat rutinu přerušení.
+CORTEX-4R rozděluje přerušení na rychlé (FIQ) a nornální (IRQ).
+Pro obě přerušení je rezervována speciální adresa, na které mikrokontrolér začne vykonávat rutinu přerušení.
 Nicméně, kromě zmíněného systému podporuje jádro CORTEX-R4 i možnost delegování kontroly nad přerušeními jinému modulu (VIM) v mikrokontroléru.
 
 Pokud je v jádře CORTEX-R4 zapnuto přímé přesměrování přerušeních do modulu VIM (v registru CPSR), modul sám určí, které přerušení nastalo.
-Přerušení je automaticky vyhodnoceno a vykonávání programu se přesune na příslušnou oblužnou rutinu vyplněnou v tabulce přerušení bez skoku na stadrarní obsluhy přerušení IRQ a FIQ v tabulce vyjímek jádra CORTEX-R4.
+Přerušení je automaticky vyhodnoceno a vykonávání programu se přesune na příslušnou oblužnou rutinu vyplněnou v tabulce přerušení bez skoku na stadrarní obsluhy přerušení IRQ a FIQ v tabulce výjimek jádra CORTEX-R4.
 
 Přidání podpory přerušení do operačního systému se tedy musí řešit pro oba případy, s podporou řízení v modulu VIM i bez podpory.
 
@@ -323,18 +320,18 @@ Bez podpory modulu VIM je přizpůsobení operačnímu systému RTEMS velmi snad
 Operační systém je navržen tak, aby všechna přerušení procházela přes jeho jádro.
 Tímto postupem dokáže jádro RTEMS softwarově určovat a nastavovat hodnotu priority přerušení.
 Taktéž tento postup dává plánovači znatelně větší kontrolu nad plánováním vykonávaného kódu.
-Připojení se provede zapsáním instrukce skoku na funkci \_ARMV4\_Exception\_interrupt do tabulky vyjímek jádra CORTEX-R4 (adresa 24 - IRQ a 28 - FIQ).
+Připojení se provede zapsáním instrukce skoku na funkci \_ARMV4\_Exception\_interrupt do tabulky výjimek jádra CORTEX-R4 (adresa 24 - IRQ a 28 - FIQ).
 
 Při zapnutí aktivního řízení přerušení z modulu VIM a aktivní událostí přerušení přejde mikrokontroler přímo na adresy vyplněné ve vektorové tabulce modulu VIM.
-Toto řešení je vhodno pro co nejrychlejší obsluhu přeružení bez zbytečné zátěže, ale má nevýhodu, že nebudou provedené případné požadavky na přeplánování vzniklé během obsluhy přerušení.
-Návrat z obslušné rutiny nebo driveru je instrukcí přímo do kódu přerušené úlohy. Systém nemá nad obsluho přerušení dohled.
+Toto řešení je vhodno pro co nejrychlejší obsluhu přerušení bez zbytečné zátěže, ale má nevýhodu, že nebudou provedené případné požadavky na přeplánování vzniklé během obsluhy přerušení.
+Návrat z obslužné rutiny nebo driveru je skokem přímo do kódu přerušené úlohy. Systém nemá nad obsluhou přerušení dohled.
 A proto pro zajištění správné práce plánovače RTEMS bylo nutné všechny specializované vektory nasměrovat opět na obecné vstupní body operačního systému RTEMS.
 Tedy, adresy ve vektorové tabulce modulu VIM nahradit skokem na jedinou rutinu \_ARMV4\_Exception\_interrupt.
 Funkcionalita modulu VIM se tedy při kombinaci s operačním systémem RTEMS může zdát do značné míry redundantní.
 
 Po vykonání náležitostí v rutině \_ARMV4\_Exception\_interrupt je ze systému předán běh zpět do ovladače mikrokontroléru.
-Funkce bsp\_interrupt\_dispatch musí rozhodnout o původu přerušení a a předat řízení funkci bsp\_interrupt\_handler\_dispatch.
-Který kanál vyvolal přerušení můžeme vždy najít v registru IRQINDEX z modulu VIM.
+Funkce bsp\_interrupt\_dispatch musí rozhodnout o původu přerušení a předat řízení funkci bsp\_interrupt\_handler\_dispatch.
+Který kanál vyvolal přerušení, můžeme vždy najít v registru IRQINDEX z modulu VIM.
 Přerušení od jednotlivých periferii v microkontroléru TMS570 vždy vedou přes modul VIM a proto by měla být hodnota IRQINDEX aktuální i při nepoužívání řízení přerušení modulem VIM.
 
 \sec ETHERNET
@@ -351,8 +348,8 @@ Přizpůsobení hardwarové platformě, přizpůsobení operačnímu systému a 
 
 \secc Přizpůsobení operačnímu systému
 
-Přizpůsobení operačnímu systému je nejjednoduší část.
-Knihovna LwIP vnitřně pracuje s obvyklými nástroji operačních systémů jako jsou vlákna, semafory, fronty a podobné.
+Přizpůsobení operačnímu systému je nejjednodušší část.
+Knihovna LwIP vnitřně pracuje s obvyklými nástroji operačních systémů, jako jsou vlákna, semafory, fronty a podobné.
 V případě, že tato část nebude implementována, LwIP použije vlastní implementaci dříve zmíněných softwarových konstruktů.
 Tato implementace bude sice funkční, ale neefektivní nebo založená na režimu opakovaného dotazování.
 
@@ -374,7 +371,7 @@ Jednoduchou implementací kritických oblastí je zakázání přerušení a tí
 Implementace dříve zmíněných funkcí a funkcí pro práci s konstrukty operačního systému je implementována v souboru sys\_arch.c.
 Protože kód bude součástí veřejného projektu či různých aplikací, je vhodné dbát na úpravu kódu, kontrolovat návratové hodnoty z funkcí a držet se zásad psaní čistého kódu.
 Ve většině případů si aplikační rozhraní knihovny LwIP a rozhraní operačního systému RTEMS odpovídala a proto je ve funkcích pouze převod volání z jednoho aplikační rozhraní do druhého.
-Vyjímku tvoří funkce čekání na semafor a frontu.
+Výjimku tvoří funkce čekání na semafor a frontu.
 V operačním systému RTEMS se nepracuje s časem, který funkce strávila čekáním na uvolnění nebo data.
 Proto tato funkčnost musela být implementována pomocí funkce rtems\_clock\_get\_uptime\_nanoseconds.
 Poslední odlišností je žádost knihovny LwIP čekat při vkládání do fronty do doby, než bude ve frontě místo.
@@ -382,7 +379,7 @@ Tato funkcionalita je realizována pomocí přidaného čítacího semaforu, kte
 
 Naposledy je ještě vhodné zmínit existenci souboru cc.h, který obsahuje definice datových typů podle použitého kompilátoru a C knihovny.
 Tento soubor je dále důležitý pro definování návratových hodnot z funkcí knihovny LWIP.
-Pro účely této práce byly standarní chybové kódy použity z operačního systému, tak aby nedocházelo ke kolizím ve jménech.
+Pro účely této práce byly standartní chybové kódy použity z operačního systému, tak aby nedocházelo ke kolizím ve jménech.
 Tohoto bylo dosaženo pomocí definice LWIP\_PROVIDE\_ERRNO.
 Definice návratových hodnot jsou v RTEMSu v souboru sys/errno.h.
 Dále jsou v souboru cc.h definice potřebné pro kompilátor.
@@ -394,18 +391,18 @@ Periferie MDIO se stará o komunikaci s PHY.
 Hlavní úlohou periferie EMAC je příjem a odesílání síťových rámců. 
 
 Práce s periferii MDIO je velmi přímočará.
-Je ponecháno výchozí nastavení a při startu inicializace se pouze kontroluje zda je spojení aktivní.
+Je ponecháno výchozí nastavení a při startu inicializace se pouze kontroluje, zda je spojení aktivní.
 Kontrola přerušení a případná reinicializace spojení je ponechána k budoucí implementaci.
 
 Periferie EMAC je na rozdíl od MDIO poněkud obsáhlejší.
 Z důvodu zrychlení odezvy a snížení výpočetních nároků byla zvolena práce s přerušeními.
 EMAC obsahuje osm vstupních a osm výstupních kanálů.
 K implementaci základní komunikační funkcionality byl vybrán pár kanálů na pozici nula.
-Veškerá komunikace tedy prochází touto dvojicí kanálů, je zpracovávana periferií EMAC a předána do knihovny LwIP.
+Veškerá komunikace tedy prochází touto dvojicí kanálů, je zpracovávána periferií EMAC a předána do knihovny LwIP.
 
 Funkce potřebné pro nastavování registrů periferie jsou umístěny v souborech ti\_drv\_emac.h a ti\_drv\_emac.h a jejich příslušných zdrojových souborech.
 Tyto krátké fukce jsou převzaté z kódu generovaného nástrojem HalCoGen od firmy Texas Instruments.
-Současná verze sloučení s projektem RTEMS licenčně již umožňuje.
+Současná verze již licenčně umožňuje sloučení s projektem RTEMS.
 Nicméně jsou tyto funkce celkově přepsané, aby odpovídaly novým definičním hlavičkovým souborům mikrokontroleru.
 
 Inicializace obsahuje možnost nastavení promiskuitního režimu, určení výchozího kanálu pro příjem všesměrových zpráv, povolení přerušení pro daný kanál, výběr mezi jednocestnou a oboucestnou komunikací a nakonec povolení přerušení na periferii EMAC.
@@ -423,11 +420,11 @@ Periferie EMAC příchozí komunikaci ukládá do softwarem připraveného zřet
 Pro učely transformace mezi jednotlivými formáty byly vytvořeny struktury emac\_tx\_bd a emac\_rx\_bd.
 Tyto struktury jsou kompatibilní s hardwarovými požadavky periferie EMAC a zároveň v sobě nesou odkaz na spjatou strukturu pbuf.
 Tento způsob značně ulehčuje práci s vyhledáváním pbufu a následnou transformaci.
-Cenou za rozšíření této struktrury o další odkaz je snížení maximálního množství dostupných struktur o čtvrtinu a zhoršení přenositelnosti kódu na jiný mikrokontroler s jiným typem ETHERNET periferie.
+Cenou za rozšíření této struktury o odkaz na víc je snížení maximálního množství dostupných struktur o čtvrtinu a zhoršení přenositelnosti kódu na jiný mikrokontroler s jiným typem ETHERNET periferie.
 
-Pro učely přenášení dat je v systému při inicializaci ovladače zaregistrováno další vlákno a semafor.
+Pro účely přenášení dat je v systému při inicializaci ovladače zaregistrováno další vlákno a semafor.
 Při přerušení od periferie EMAC je nastaven semafor, na který čeká zmíněné vlákno.
-Tímto způsobem je dosaženo minimální doby strávené v přerušení a zvýšení suverenity operační systému nad řízením běhu aplikace.
+Tímto způsobem je dosaženo minimální doby strávené v přerušení a zvýšení suverenity operačního systému nad řízením běhu aplikace.
 V tomto vlákně se z periferie EMAC postupně vyčítá příchozí paket.
 Pro identifikaci paketu se používají příznaky začátek paketu (SOF) a konec paketu (EOF) nastavované periferií EMAC při fyzickém přijmu dat.
 Při nalezení obou příznaků se všechny části paketu, reprezentované strukturami typu emac\_rx\_bd, mezi oběma příznaky vyjmou z příchozí fronty.
@@ -447,10 +444,10 @@ Výhoda i nevýhoda tohoto přístupu je patrná při použití více komunikač
 V případě, kdy jeden komunikační kanál bude výrazněji vytěžován, může nastat kritická situace a struktury dojdou.
 Výhodou je, že každý kanál má předem rezervovaný počet struktur a nemůže se stát, že jeden kanál si během vytížení přivlastní všechny dostupné struktury ostatních kanálů.
 Druhý přístup se od prvního liší tím, že nepoužívá předem daný počet struktur na komunikační kanál a fronta volných struktur je společná pro všechny.
-Poněkud odlišný způsob vnítřní reprezentace zmiňovaných zřetězených struktur tkví v udržování zřetězeného zacykleného seznamu všech struktur.
+Poněkud odlišný způsob vnitřní reprezentace zmiňovaných zřetězených struktur tkví v udržování zřetězeného zacykleného seznamu všech struktur.
 V něm si udržujeme odkaz na první připravenou a první volnou strukturu.
-Protože je potřeba udržovat o několik odkazů méně, je tento způsob méně pamětově náročný.
-Avšak klade mnohonásobně větší nároky na strojový čas, protože je neustále potřeba udržovat konzistenci a smyslupnost zmíněného cyklického seznamu.
+Protože je potřeba udržovat o několik odkazů méně, je tento způsob méně paměťově náročný.
+Avšak klade mnohonásobně větší nároky na strojový čas, protože je neustále potřeba udržovat konzistenci a smysluplnost zmíněného cyklického seznamu.
 Implementace ovladače v této práci používá první způsob a pro jeho realizaci jsou vytvořeny struktury rxch a txch.
 Deklarace všech struktur jsou v souboru tms570\_emac.h.
 Odesílání paketů z knihovny LwIP je řešeno analogicky k přijímání dat.
@@ -459,7 +456,7 @@ Jediná výjimka je, že obslužný kód běží na úkor knihovny LwIP a ne vla
 Systém předávání interních dat v ovladači a parametrů mezi ovladačem a knihovnou LwIP je realizován pomocí struktury netif.
 Tato struktura je v kompetenci knihovny LwIP a ze zásad objektového přístupu není vhodné ji měnit jinak, než přes vyexportované nastavující funkce.
 To však neplatí pro její položku state, kam se při inicializaci ovladače může nahrát vnitřní struktura tms570\_netif\_state.
-Tato struktura obsahuje záhlaví již zmíněhých zřetězených seznamů struktur emac\_tx\_bd a další interní informace jako jsou odkazy na periferie EMAC a MDIO.
+Tato struktura obsahuje záhlaví již zmíněných zřetězených seznamů struktur emac\_tx\_bd a další interní informace jako jsou odkazy na periferie EMAC a MDIO.
 Smyslem takovéto práce s daty je pokus o udržování objektového přístupu, v tomto případě se jedná o větší kontrolu nad strukturou předávaných dat.
 %Nutností by to bylo až v případě, že by se do knihovny přidával další ovladač.
 
@@ -467,7 +464,7 @@ Kontrola nad alokací struktur pbuf je kompletně v režii knihovny LwIP.
 Vzhledem k faktu, že struktury pbuf se používají po celé knihovně LwIP a že jedna a tatáž instance struktury je předávána mezi mnoha vrstvami knihovny či vlákny operačního systému, je struktura pbuf sdílená datová oblast a je potřeba k ní přistupovat jako ke kritické.
 Při správném přizpůsobení operačnímu systému a vhodném nastavení knihovny LwIP je uvolňování a alokování struktury pbuf považováno za bezpečné i z jiného vlákna nebo dokonce kontextu přerušení.
 Avšak stále je potřeba dbát na správné uvolňování již použitých pbuf struktur po odesílání paketu.
-Stejně tak kritické je správně uvolňovat pamět po špatné alokaci struktury pbuf.
+Stejně tak kritické je správně uvolňovat paměť po špatné alokaci struktury pbuf.
 Velký pozor by měl být věnován i místu odkud se pbuf\_alloc volá.
 Knihovna LwIP obsahuje možnost při uvolnění místa v paměti pro struktury pbuf zavolat uživatelskou funkci (např. tms570\_eth\_memp\_avaible).{}
 Pokud by tato zpětná funkce volala přímo pbuf\_alloc, může snadno dojít k rekurzivnímu zacyklení, protože zpětná funkce může být volána i z vnitřku špatně použitého pbuf\_alloc.
@@ -476,7 +473,7 @@ Jediná možnost, jak si být jistý korektností použití pbuf\_alloc, je poč
 
 \sec Testování
 
-Funkcionalita implementace byla v průběhu vývoje často testována obecnými předpřipravenými testy z projektu RTEMS.
+
 
 \chap Závěr
 
@@ -522,3 +519,4 @@ Během testování se vyskytlo několik zásadních problémů, ale po vyladěn�
 
 \bye
 \grid
+
