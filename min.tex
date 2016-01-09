@@ -266,8 +266,7 @@ Do jádra systému RTEMS se vkládá pomocí definice BSP\_output\_char.
 \secc        Časovač
 
 	Časovač je periferie, která je zásadní pro správné fungování operačního systému.
-Pomocí časovače operační systém rozděluje čas na malá časová kvanta, ve kterých může běžet vždy jen jedno aplikační vlákno.
-O tato časová kvanta tedy všechny vlákna vedou nekončící boj.
+Operační systém pomocí časovače řídí přidělování času úlohám a inicializuje přepínání úloh. 
 
 V mikrokontroléru TMS570 je hlavní časovací jednotka pro podporu operačních systémů nazývána RTI.
 Periferie RTI obsahuje dva nezávislé 64bitové čítače, podporu synchronizace s komunikací na sběrnici FlexRay a mnohé další.
@@ -291,18 +290,18 @@ Jako poslední se nastaví povolení přerušení v registru SETINTENA.
 
 \secc    Pinmux
 
-Periferie Pinmux slouží prostředník mezi ostatními periferiemi mikrokontroleru a výstupními piny.
+Periferie Pinmux slouží jako prostředník mezi téměř všechny periferiemi mikrokontroleru a výstupními piny.
 V dnešní době je počet vstupně výstupních pinů mikrokontrolérů důležitý parametr.
 Počet pinů je většinou spjatý s počtem zařízení, které bude mikrokontroler schopen obsluhovat či kontrolovat.
-Bohužel pouzdro s fyzickými piny pro mikrokontrolér je jedna z podstatných složek ceny.
+Bohužel pouzdro PQFP s fyzickými piny pro mikrokontrolér je jedna z podstatných složek ceny mikrokontroléru.
+Naproti tomu pouzdra BGA většinou vyžadují vícevrstvé tištěné spoje a tím efektivně prodražují návrh a cenu desky.
 Z tohoto důvodu se firmy snaží naleznout kompromis mezi počtem pinů mikrokontroléru a zároveň udržení co nejvyšší použitelnosti mikrokontroléru.
 Pro účely zvýšení efektivity a vytíženosti pinů byla vytvořena transformační síť, která dovoluje výhradní kontrolu nad pinem přiřadit jedné z několika spjatých periferí.
 Periferie pinmux ovládá tuto síť.
 
-V souboru pinmux.
-c je umístěna implementace obsluhy této periferie.
+V souboru pinmux.c je umístěna implementace obsluhy této periferie.
 Prozatím není provázána s jádrem operačního systému, ale protože pro vývojáře může mít tato periferie kritickou důležitost, jsou funkce obsluhující tuto periferii vyexportovány a připraveny k použití.
-
+Taktéž by podpora této periferie byla nutná pro případný start operačního systému RTEMS jako primárního kódu přímo přes reset vektor bez použití zavaděče.
 \secc	VIM
 
 Vektorový modul přerušení (VIM) je zásadní pro reakční dobu mikrokontrolérů.
