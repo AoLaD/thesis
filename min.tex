@@ -49,7 +49,7 @@ Dále pak jako seznámení a vyzkoušení schvalovacího modelu otevřených pro
 
 Text této diplomové práce by měl sloužit ostatním vývojářům k replikování a dokumentaci mé práce.
 Taktéž se může použít pro základní seznámení s mikrokontrolérem TMS570.
-A v neposlední řadě zde může vývojář naleznout návod, jak přidat podporu pro nový mikrokontrolér do operačního systému RTEMS nebo jak napsat ovladač do knihovny LWIP a jakých věcí se při jeho tvorbě vyvarovat.   
+A v neposlední řadě zde může vývojář naleznout návod, jak přidat podporu pro nový mikrokontrolér do operačního systému RTEMS nebo jak napsat ovladač do knihovny LwIP a jakých věcí se při jeho tvorbě vyvarovat.   
 
 \medskip
 
@@ -57,12 +57,12 @@ A v neposlední řadě zde může vývojář naleznout návod, jak přidat podpo
 Tento dokument dodržuje doporučenou strukturu pro psaní diplomové práce a je explicitně rozdělen na část teorie a realizace.
 
 V teoretické části lze naleznout popis funkcionality použitého mikrokontroléru TMS570 a vývojového kitu TMS570LS31xHDK.
-Druhá část teorie obsahuje základní vymezení pojmů operačního systému, projektu RTEMS, hlavičkových souborů a ethernetu společně s knihovnou LWIP.
+Druhá část teorie obsahuje základní vymezení pojmů operačního systému, projektu RTEMS, hlavičkových souborů a ethernetu společně s knihovnou LwIP.
 
 Realizace je logicky rozdělená podle posloupnosti operací při vývoji.
 Můžeme zde naleznout návod, jak připravit hlavičkové soubory k mikrokontroléru.
 Dále pak jak se implementuje základní funkcionalita nového mikrokontroléru v projektu RTEMS.
-A naposledy je zde podrobný popis vývoje nového ovladače do knihovny LWIP.
+A naposledy je zde podrobný popis vývoje nového ovladače do knihovny LwIP.
 Toto vše je zakončeno testováním výsledné realizace.
 
 Závěr poté už jen shrnuje výsledky diplomové práce.}
@@ -338,20 +338,20 @@ Přerušení od jednotlivých periferii v microkontroléru TMS570 vždy vedou p�
 \sec ETHERNET
 
 	Výběr sítové komunikační knihovny byl konzultován s komunitou vývojářů systému RTEMS.
-Do hlavního výběru byla uvažována vnitřní knihovna RTEMSu, knihovna BSD a knihovna LWIP.
+Do hlavního výběru byla uvažována vnitřní knihovna RTEMSu, knihovna BSD a knihovna LwIP.
 Komunita RTEMS před časem vložila velké úsilí do vlastního knihovny, která je přímo zavedena v jádře operačního systému.
 Bohužel se ukázalo, že udržování takhle komplikované knihovny je nad komunitní síly, proto je nyní tendence podporovat ostatní komunikační knihovny od třetích stran.
 Knihovna BSD se kvůli svým nárokům nehodí pro použití v aplikacích s mikrokontrolérem TMS570.
 Vnitřní knihovna RTEMS nebyla vybrána pro její možné brzké zrušení z vývojové větve RTEMS.
-V rámci této diplomové práce byl stvořen ovladač pro knihovnu LWIP.
-Ovladač do knihovny LWIP by měl splňovat následující tři funkce.
-Přizpůsobení hardwarové platformě, přizpůsobení operačnímu systému a přizpůsobení knihovně LWIP. 
+V rámci této diplomové práce byl stvořen ovladač pro knihovnu LwIP.
+Ovladač do knihovny LwIP by měl splňovat následující tři funkce.
+Přizpůsobení hardwarové platformě, přizpůsobení operačnímu systému a přizpůsobení knihovně LwIP. 
 
 \secc Přizpůsobení operačnímu systému
 
 Přizpůsobení operačnímu systému je nejjednoduší část.
-Knihovna LWIP vnitřně pracuje s obvyklými nástroji operačních systémů jako jsou vlákna, semafory, fronty a podobné.
-V případě, že tato část nebude implementována, LWIP použije vlastní implementaci dříve zmíněných softwarových konstruktů.
+Knihovna LwIP vnitřně pracuje s obvyklými nástroji operačních systémů jako jsou vlákna, semafory, fronty a podobné.
+V případě, že tato část nebude implementována, LwIP použije vlastní implementaci dříve zmíněných softwarových konstruktů.
 Tato implementace bude sice funkční, ale neefektivní nebo založená na režimu opakovaného dotazování.
 
 Při vkládání podpory operačního systému je důležitá dvojice souborů sys\_arch.c a sys\_arch.h.{}
@@ -360,7 +360,7 @@ V tomto případě s využitím semaforů, mutexů a front systému RTEMS.
 Z důvodu rozdílného zacházení s těmito strukturami nebylo vhodné provádět redefinici jedna ku jedné.
 RTEMS při předávání zmíněných konstruktů nepoužívá přímý odkaz na konstrukt, ale používá vnitřní identifikátor.
 Z hlediska bezpečnosti je přístup operačního systému RTEMS znatelně lepší, protože uživatelské aplikaci nedává možnost pracovat se zmíněnými konstrukty operačního systému bez volání vyexportovaných systémových funkcí.
-Pro párování konstruktů operačního systému RTEMS s konstrukty LWIP byly potřeba vytvořit příslušné struktury (např. port\_mutex\_t).
+Pro párování konstruktů operačního systému RTEMS s konstrukty LwIP byly potřeba vytvořit příslušné struktury (např. port\_mutex\_t).
 
 Navíc proti požadavkům LwIP byla do hlavičkového souboru přidána funkce pro práci s datovými bariérami.
 Této funkce bude zapotřebí při dalším přizpůsobování v případech, kdy mohou vznikat datové hazardy.
@@ -371,11 +371,11 @@ Jednoduchou implementací kritických oblastí je zakázání přerušení a tí
 
 Implementace dříve zmíněných funkcí a funkcí pro práci s konstrukty operačního systému je implementována v souboru sys\_arch.c.
 Protože kód bude součástí veřejného projektu či různých aplikací, je vhodné dbát na úpravu kódu, kontrolovat návratové hodnoty z funkcí a držet se zásad psaní čistého kódu.
-Ve většině případů si aplikační rozhraní knihovny LWIP a rozhraní operačního systému RTEMS odpovídala a proto je ve funkcích pouze převod volání z jednoho aplikační rozhraní do druhého.
+Ve většině případů si aplikační rozhraní knihovny LwIP a rozhraní operačního systému RTEMS odpovídala a proto je ve funkcích pouze převod volání z jednoho aplikační rozhraní do druhého.
 Vyjímku tvoří funkce čekání na semafor a frontu.
 V operačním systému RTEMS se nepracuje s časem, který funkce strávila čekáním na uvolnění nebo data.
 Proto tato funkčnost musela být implementována pomocí funkce rtems\_clock\_get\_uptime\_nanoseconds.
-Poslední odlišností je žádost knihovny LWIP čekat při vkládání do fronty do doby, než bude ve frontě místo.
+Poslední odlišností je žádost knihovny LwIP čekat při vkládání do fronty do doby, než bude ve frontě místo.
 Tato funkcionalita je realizována pomocí přidaného čítacího semaforu, který znázorňuje volné místo ve frontě.
 
 Naposledy je ještě vhodné zmínit existenci souboru cc.h, který obsahuje definice datových typů podle použitého kompilátoru a C knihovny.
@@ -399,7 +399,7 @@ Periferie EMAC je na rozdíl od MDIO poněkud obsáhlejší.
 Z důvodu zrychlení odezvy a snížení výpočetních nároků byla zvolena práce s přerušeními.
 EMAC obsahuje osm vstupních a osm výstupních kanálů.
 K implementaci základní komunikační funkcionality byl vybrán pár kanálů na pozici nula.
-Veškerá komunikace tedy prochází touto dvojicí kanálů, je zpracovávana periferií EMAC a předána do knihovny lwip.
+Veškerá komunikace tedy prochází touto dvojicí kanálů, je zpracovávana periferií EMAC a předána do knihovny LwIP.
 
 Funkce potřebné pro nastavování registrů periferie jsou umístěny v souborech ti\_drv\_emac.h a ti\_drv\_emac.h a jejich příslušných zdrojových souborech.
 Tyto krátké fukce jsou převzaté z kódu generovaného nástrojem HalCoGen od firmy Texas Instruments.
@@ -409,15 +409,15 @@ Nicméně jsou tyto funkce celkově přepsané, aby odpovídaly novým definičn
 Inicializace obsahuje možnost nastavení promiskuitního režimu, určení výchozího kanálu pro příjem všesměrových zpráv, povolení přerušení pro daný kanál, výběr mezi jednocestnou a oboucestnou komunikací a nakonec povolení přerušení na periferii EMAC.
 Po tomto nastavení je periferie EMAC připravena k použití a při vyplnění adresy prázdného a připraveného spojitého seznamu do registru RX\_HDP začne periferie EMAC zapisovat přijatá data.
 
-\secc Přizpůsobení LWIP knihovně
+\secc Přizpůsobení LwIP knihovně
 
-Tato část ovladače spojuje knihovnu LWIP s hardwarovým rozhraním mikrokontroleru TMS570.
+Tato část ovladače spojuje knihovnu LwIP s hardwarovým rozhraním mikrokontroleru TMS570.
 Cílem je vytvořit datové struktury pro přenos dat mezi zmíněnými rozhraními a příslušnou funkcionalitu pro jejich obsluhu.
 
-Knihovna LWIP na vstupu očekává zřetězený seznam typu pbuf, který obsahuje všechny nově přijaté pakety určené ke zpracování.
-Na výstupu očekává knihovna LWIP funkci, která podobný zřetězený seznam odešle.  
+Knihovna LwIP na vstupu očekává zřetězený seznam typu pbuf, který obsahuje všechny nově přijaté pakety určené ke zpracování.
+Na výstupu očekává knihovna LwIP funkci, která podobný zřetězený seznam odešle.  
 
-Periferie EMAC příchozí komunikaci ukládá do softwarem připraveného zřetězeného seznamu, který bohužel není kompatibilní se strukturou pbuf, používanou knihovnou LWIP.
+Periferie EMAC příchozí komunikaci ukládá do softwarem připraveného zřetězeného seznamu, který bohužel není kompatibilní se strukturou pbuf, používanou knihovnou LwIP.
 Pro učely transformace mezi jednotlivými formáty byly vytvořeny struktury emac\_tx\_bd a emac\_rx\_bd.
 Tyto struktury jsou kompatibilní s hardwarovými požadavky periferie EMAC a zároveň v sobě nesou odkaz na spjatou strukturu pbuf.
 Tento způsob značně ulehčuje práci s vyhledáváním pbufu a následnou transformaci.
@@ -430,7 +430,7 @@ V tomto vlákně se z periferie EMAC postupně vyčítá příchozí paket.
 Pro identifikaci paketu se používají příznaky začátek paketu (SOF) a konec paketu (EOF) nastavované periferií EMAC při fyzickém přijmu dat.
 Při nalezení obou příznaků se všechny části paketu, reprezentované strukturami typu emac\_rx\_bd, mezi oběma příznaky vyjmou z příchozí fronty.
 Pomocí odkazu uvnitř struktury se dohledají příslušné struktury pbuf a zřetězí se do spojitého seznamu tak, aby struktury pbuf tvořily logicky stejnou informaci jako v původních strukturách emac\_rx\_bd.
-Odkaz na tento nově zformovaný řetězec se odešle ke zpracování LWIP knihovně pomocí vstupní funkce.
+Odkaz na tento nově zformovaný řetězec se odešle ke zpracování LwIP knihovně pomocí vstupní funkce.
 
 Struktury emac\_tx\_bd a emac\_rx\_bd jsou vytvořeny ve speciální části adresového prostoru, který odpovídá periferii EMAC, a tím periferii EMAC zajištují snadnější přístup a operace nad zmíněnými strukturami.
 Pro tuto část ovladače je velmi kritické, jak s danými strukturami bude zacházeno a jak budou reprezentovány.
@@ -451,23 +451,23 @@ Protože je potřeba udržovat o několik odkazů méně, je tento způsob mén�
 Avšak klade mnohonásobně větší nároky na strojový čas, protože je neustále potřeba udržovat konzistenci a smyslupnost zmíněného cyklického seznamu.
 Implementace ovladače v této práci používá první způsob a pro jeho realizaci jsou vytvořeny struktury rxch a txch.
 Deklarace všech struktur jsou v souboru tms570\_emac.h.
-Odesílání paketů z knihovny lwip je řešeno analogicky k přijímání dat.
-Jediná výjimka je, že obslužný kód běží na úkor knihovny lwip a ne vlastního vlákna.
+Odesílání paketů z knihovny LwIP je řešeno analogicky k přijímání dat.
+Jediná výjimka je, že obslužný kód běží na úkor knihovny LwIP a ne vlastního vlákna.
 
-Systém předávání interních dat v ovladači a parametrů mezi ovladačem a knihovnou LWIP je realizován pomocí struktury netif.
-Tato struktura je v kompetenci knihovny LWIP a ze zásad objektového přístupu není vhodné ji měnit jinak, než přes vyexportované nastavující funkce.
+Systém předávání interních dat v ovladači a parametrů mezi ovladačem a knihovnou LwIP je realizován pomocí struktury netif.
+Tato struktura je v kompetenci knihovny LwIP a ze zásad objektového přístupu není vhodné ji měnit jinak, než přes vyexportované nastavující funkce.
 To však neplatí pro její položku state, kam se při inicializaci ovladače může nahrát vnitřní struktura tms570\_netif\_state.
 Tato struktura obsahuje záhlaví již zmíněhých zřetězených seznamů struktur emac\_tx\_bd a další interní informace jako jsou odkazy na periferie EMAC a MDIO.
 Smyslem takovéto práce s daty je pokus o udržování objektového přístupu, v tomto případě se jedná o větší kontrolu nad strukturou předávaných dat.
 %Nutností by to bylo až v případě, že by se do knihovny přidával další ovladač.
 
-Kontrola nad alokací struktur pbuf je kompletně v režii knihovny LWIP.
-Vzhledem k faktu, že struktury pbuf se používají po celé knihovně LWIP a že jedna a tatáž instance struktury je předávána mezi mnoha vrstvami knihovny či vlákny operačního systému, je struktura pbuf sdílená datová oblast a je potřeba k ní přistupovat jako ke kritické.
-Při správném přizpůsobení operačnímu systému a vhodném nastavení knihovny LWIP je uvolňování a alokování struktury pbuf považováno za bezpečné i z jiného vlákna nebo dokonce kontextu přerušení.
+Kontrola nad alokací struktur pbuf je kompletně v režii knihovny LwIP.
+Vzhledem k faktu, že struktury pbuf se používají po celé knihovně LwIP a že jedna a tatáž instance struktury je předávána mezi mnoha vrstvami knihovny či vlákny operačního systému, je struktura pbuf sdílená datová oblast a je potřeba k ní přistupovat jako ke kritické.
+Při správném přizpůsobení operačnímu systému a vhodném nastavení knihovny LwIP je uvolňování a alokování struktury pbuf považováno za bezpečné i z jiného vlákna nebo dokonce kontextu přerušení.
 Avšak stále je potřeba dbát na správné uvolňování již použitých pbuf struktur po odesílání paketu.
 Stejně tak kritické je správně uvolňovat pamět po špatné alokaci struktury pbuf.
 Velký pozor by měl být věnován i místu odkud se pbuf\_alloc volá.
-Knihovna LWIP obsahuje možnost při uvolnění místa v paměti pro struktury pbuf zavolat uživatelskou funkci (např. tms570\_eth\_memp\_avaible).{}
+Knihovna LwIP obsahuje možnost při uvolnění místa v paměti pro struktury pbuf zavolat uživatelskou funkci (např. tms570\_eth\_memp\_avaible).{}
 Pokud by tato zpětná funkce volala přímo pbuf\_alloc, může snadno dojít k rekurzivnímu zacyklení, protože zpětná funkce může být volána i z vnitřku špatně použitého pbuf\_alloc.
 Z tohoto důvodu není v této práci zpětné funkci přiřazena vysoká priorita.
 Jediná možnost, jak si být jistý korektností použití pbuf\_alloc, je počítání místa, které je ještě volné k alokaci.
@@ -495,10 +495,10 @@ Do hlavní vývojové větve se tímto dostaly hlavičkové soubory popisující
 Formát hlavičkových souborů je úplnější než ten poskytovaný firmou Texas Instruments.
 A ačkoliv jsou nyní hlavičkové soubory generované firmou Texas Instruments dostupné pod RTEMS kompatibilní licencí, hlavičkové soubory vzniklé v rámci této práce jsou pro vývojáře snadnější na použití a jejich používáním vzniká přehlednější a čistější kód. 
 
-Poslední implementační částí diplomové práce byl ovladač pro síťovou knihovnu LWIP.
+Poslední implementační částí diplomové práce byl ovladač pro síťovou knihovnu LwIP.
 Této knihovně byla dána přednost před knihovnou BSD a původní vestavěnou síťovou knihovnou v projektu RTEMS.
-V textu této práce je základní návod k implementaci LWIP ovladače a popis jeho částí kritických pro stabilní běh.
-Dokumentace knihovny LWIP je do značné míry minimalistická a proto může tato diplomová práce sloužit i jako jednoduchý úvod do fungování knihovny LWIP.
+V textu této práce je základní návod k implementaci LwIP ovladače a popis jeho částí kritických pro stabilní běh.
+Dokumentace knihovny LwIP je do značné míry minimalistická a proto může tato diplomová práce sloužit i jako jednoduchý úvod do fungování knihovny LwIP.
 Kromě návodu na tvorbu ovladače byl velký důraz kladen na korektní umístění a volání funkcí, efektivitu, stabilitu a přenositelnost.
 
 Implementace byla během práce i po skončení úspěšně testována obecnými testy již obsaženými v projektu RTEMS.
