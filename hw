@@ -44,10 +44,10 @@ Obě procesorová jádra mají implementovány geometrické a časové rozdíly,
 Druhé jádro je uvedeno zrcadlově a při zpracovávání kódu využívá zpoždění v řádu několika cyklů.
 
 Výhodou synchronní architektury je především vysoké diagnostické pokrytí, neboť hardware, porovnávající práci obou procesorů, pracuje trvale v každém cyklu CPU.
-V případě detekce chyby je během několika cyklů procesoru schopen přejít do bezpečného chybového stavu.
+V případě detekce chyby je systém během několika cyklů procesoru schopen přejít do bezpečného chybového stavu.
 S ohledem k tomu je detekce chyb možná pouze na hardwaru, který je pro software transparentní, alespoň pokud jde o procesorové chyby.
 
-V mikrokontroléru je integrován modul ECC, který diagnostikuje jak chyby v programu, tak i datové paměti procesoru TMS570, a zajišťuje příslušné reakce.
+V mikrokontroléru je integrován modul ECC, který diagnostikuje jak chyby v programu, tak i datové paměti procesoru TMS570 a zajišťuje příslušné reakce.
 Tento modul umožňuje opravit chyby v jednom bitu a detekovat chyby ve dvou bitech datového slova.
 Není však schopen sledovat vnitřní adresovou sběrnici a hardwarový dekodér paměti.
 
@@ -72,52 +72,48 @@ Ten umožňuje centralizovanou volbu priorit, analýzu a signalizaci všech zji�
 
 \secc Časovač
 
-Periferie časovače RTI poskytuje operačnímu systém nástroj jak, měřit časová kvanta a podle nich provádět přepínání kontextu.
-Periferie obsahuje několik čítačů, které mohou definovat základní časové základny pro plánovač operačního systému.  
+Periferie časovače RTI poskytuje operačnímu systém nástroj, jak měřit časová kvanta a podle nich provádět přepínání kontextu.
+Periferie obsahuje několik čítačů, které mohou definovat základní časové základny pro plánovač operačního systému. 
 Mimo jiné dovoluje periferie časovače využití některého z čítačů jako nástroj pro měření doby běhu celého programu nebo jeho úseků.
 Při používání komunikační periferie FlexRay, dovoluje modul časovače synchronizovat čas ze sběrnice FlexRay.
-Při poruše na sběrnici dokáže modul časovače automaticky přejít na vnitřní čas mikrokontroléru, tak aby běh operačního systému zůstal zachován.
 
-V periferii časovače se nalézá i hlídací (watchdog) periferie. Úkolem této části mikrokontroléru je po prvním nastavení hlídat běh kódu a vynutit resstart nebo chybu procesero pokud vykonávání hlídané smyčky kódu trvá delší nebo kratší dobu.
 
-Tento modul je navržen tak, aby odpovídál požadavkům normy automobilového průmyslu OSEK.
 
+Při poruše na sběrnici dokáže modul časovače automaticky přejít na vnitřní čas mikrokontroléru tak, aby běh operačního systému zůstal zachován.
+Součástí periferie časovače je hlídací (watchdog) periferie. Úkolem této části mikrokontroléru je po prvním nastavení hlídat běh kódu a vynutit restart nebo chybu procesoru, pokud vykonávání hlídané smyčky kódu trvá delší nebo kratší dobu.
+Tento modul je navržen tak, aby odpovídal požadavkům normy automobilového průmyslu OSEK.
 Obrázek XXX ukazuje základní blokový diagram RTI periferie.
 
-\medskip
-\clabel[fisrt]{prvni superduper obrazek}
-\picw=13cm \cinspic img/timer.jpg
-\caption/f prvni superduper obrazek. Obrázek vyfotil!
-\medskip
 
-Z obrázku je vidět, že periferie obsahuje dva nezávislé čítače pro generování rozdílných časových základen.
-První čítač mimo jiného pracuje i se zmíněným časovým signálem z periferie FlexRay (pokud není uspaná).
-Dále dokáže dohlížet na časový signál z modulu FlexRay v případě chyby se dokáže okamžitě přepojit na interní hodinový signál.
-Zbylá funkcionalita obou čítačů je stejná.
+%\medskip
+%\clabel[fisrt]{prvni superduper obrazek}
+%\picw=13cm \cinspic img/timer.jpg
+%\caption/f prvni superduper obrazek. Obrázek vyfotil!
+%\medskip
 
-Porovnávací jednotka porovnává čítače s naprogramovanými hodnotami a generuje čtyři různé žádosti o přerušení nebo o začátek přenosu DMA.
-Vstup do každé z těchto čtyřech porovnávacích jednotek může být zvolen buď z čítače jedna nebo dva.
+Z obrázku je vidět, že periferie obsahuje dva nezávislé čítače pro generování rozdílných časových základen. První čítač mimo jiného pracuje i se zmíněným časovým signálem z periferie FlexRay (pokud není uspaná). Dále dokáže první čítač dohlížet na časový signál z modulu FlexRay. V případě chyby se čítač číslo jedna dokáže okamžitě přepojit na interní hodinový signál. Zbylá funkcionalita obou čítačů je stejná.
+Porovnávací jednotka porovnává čítače s naprogramovanými hodnotami a generuje čtyři různé žádosti o přerušení nebo o začátek přenosu DMA. Vstup do každé z těchto čtyřech porovnávacích jednotek může být zvolen buď z čítače jedna nebo z čítače dva.
 
 % XXX odkaz na referenční manual
 
 \secc Sériové porty
 
-Obsluha seriových portů v mikrokontroléru tms570 je možna ze dvou periferii. V obou je obsluha seriových portů stejná, ale periferie SCI/LIN poskytuje vývojáři rozšířenou funkcionalitu o protokol LIN.
 
-Základní funkčností periferií je tedy protokol universální asynchroní seriové komunikace (UART). LIN je protokol vycházející z protokolu UART, který podporuje komunikaci typu jeden hlavní a více vedlejších zařízeních s možností adresovat více zařízení v síti najednou.
 
+Obsluha seriových portů v mikrokontroléru tms570 je možná ze dvou periferii. V obou je obsluha sériových portů stejná, ale periferie SCI/LIN poskytuje vývojáři rozšířenou funkcionalitu o protokol LIN.
+Základní funkčností sériových periferií je tedy protokol universální asynchronní sériové komunikace (UART). LIN je protokol vycházející z protokolu UART, který podporuje komunikaci typu jeden hlavní a více vedlejších zařízeních s možností adresovat více zařízení v síti najednou.
 Periferie podporuje jednocestnou i oboucestnou komunikaci, dva kanály přerušení, 1-8bitů přenesených dat, volitelný devátý bit pro adresování, možnost sudé nebo liché parity a samozřejmě jeden až dva konečné bity za znakem.
-V dnešní, energeticky úsporné době, může přijít vhod možnost probuzení mikrokontroléru při přijetí zprávy.
 
+V dnešní energeticky úsporné době, může přijít vhod možnost probouzení mikrokontroléru přijetím zprávy.
 Periferie pro obsluhu sériového portu (SCI) se skládá ze tří hlavních bloků:
 
 \begitems
 
-* Přijímač -- postupně posouvá přijaté bity v posuvném registru. Při dokončení přenosu budou data v registru SCIRD.
 
-* Vysílač -- Podle registru SCITD postupně, bit po bitu, nastavuje úroveň signálu na výstupním pinu mikrokontroléru.
 
-* Generátor modulační rychlosti --  Programovatelný generátor závislý na hodinovém kanálu VBUSP.
+Přijímač -- postupně posouvá přijaté bity v posuvném registru. Při dokončení přenosu budou data v registru SCIRD.
+Vysílač -- Podle registru SCITD postupně, bit po bitu, nastavuje úroveň signálu na výstupním pinu mikrokontroléru.
+Generátor modulační rychlosti -- Programovatelný generátor závislý na hodinovém kanálu VBUSP.
 
 \enditems
 
@@ -129,33 +125,22 @@ Na obrázku XXX lze naleznout formát komunikace jednoho znaku.
 %\caption/f prvni superduper obrazek. Obrázek vyfotil!
 %\medskip
 
-Znázorněný adressový bit je velmi důležitý pro komunikace více zařízení po seriové lince.
+Znázorněný adresový bit je velmi důležitý pro komunikace více zařízení po sériové lince.
 
 \secc Řízení přerušení
 
-Kvůli snadnějšímu obsluhování přerušení byl firmou Texas Instruments do mikrokontroléru zakomponován modul řadiče vektorových přerušení (VIM).
-Periferie, které generují žádosti o přerušení, posílají zprávy do modulu VIM. Po jejich následném zpracování rozhodne modul, jestli je žádost oprávněná. Po kladném vyhodnocení modul VIM pošle znamení jádru mikrokontroléru (CORTEX-R4), aby bylo provedeno přerušení.
+Kvůli snadnější obsluze přerušení byl firmou Texas Instruments do mikrokontroléru zakomponován modul řadiče vektorových přerušení (VIM).
+Periferie, které generují žádosti o přerušení, posílají zprávy do modulu VIM. Po jejich zpracování rozhodne modul, jestli je žádost oprávněná. Po kladném vyhodnocení modul VIM pošle znamení jádru mikrokontroléru (CORTEX-R4), aby bylo provedeno přerušení.
 Následně modul VIM pomáhá s jeho řízením čtyřmi rozlišnými způsoby.
 
-Nejstarší přístup pracuje tak, jak by to bylo běžné v jádře CORTEX-R4.
-Řízení je předáno na adresu vektoru přerušení v tabulce vyjímek jádra.
-Úkolem obslužné rutiny je přečíst registr IRQINDEX, kam modul VIM uložil index právě probíhajícího přerušení.
-Tento přístup je kompatibilní se staršími mikrokontroléry jako je TMS470.
 
-Trošku modernější přístup automaticky připraví vektor přerušení.
-Nicméně je potřeba tyto vektory vyplnit před zapnutím přerušení do paměti associované s modulem VIM.
-Jakmile modul VIM obdrží žádost o přerušení, připraví do registru IRQVECREG adresu rutiny přerušení, kterou si načetl z předem vyplněné tabulky.
-Obecná obslužná rutina přerušení, která se nachází v tabulce vyjímek, může pouze provést skok na adresu vyplněnou modulem VIM.
 
+Nejstarší přístup pracuje tak, jak by to bylo běžné v jádře CORTEX-R4. Řízení je předáno na adresu vektoru přerušení v tabulce výjimek jádra. Úkolem obslužné rutiny je přečíst registr IRQINDEX, kam modul VIM uložil index právě probíhajícího přerušení. Tento přístup je kompatibilní se staršími mikrokontroléry jako je TMS470.
+Trošku modernější přístup automaticky připraví vektor přerušení. Nicméně je potřeba tyto vektory vyplnit před zapnutím přerušení do paměti associované s modulem VIM. Jakmile modul VIM obdrží žádost o přerušení, připraví do registru IRQVECREG adresu rutiny přerušení, kterou si načetl z předem vyplněné tabulky. Obecná obslužná rutina přerušení, která se nachází v tabulce výjimek, může pouze provést skok na adresu vyplněnou modulem VIM.
 Třetí automatický přístup lze použít pouze pro obyčejná přerušení (IRQ) a ne pro přerušení s rychlou odezvou (FIQ).
-Postup přerušení je analogický k předchozímu přístupu s jedinou vyjímkou.
-Modul VIM požádá jádro, aby neprovádělo skok na obvyklou adresu v tabulce vyjímek, ale aby rovnou předalo řízení na adresu, kterou on jádru podstrčí.
-Tak se skočí na adresu, která odpovídá obsluze přerušení vyplněné při inicializaci.
-Tato funkcionalita se zapíná v jádře CORTEX-R4 pomocí bitu VE v konfiguračním registru.
 
-Poslední přístup předpokládá využítí programem řízených přerušení.
-Aplikace se spoléhá pouze an sebe a funkcionalitu vektorů spravovaných modulem VIM odmítá.
-V takovémto případě se od aplikace očekává, že kromě zrušení žádosti o přerušení v dané periferii (časovač), zruší aplikace ještě žádost o přerušení v modulu VIM.
+Postup přerušení je analogický k předchozímu přístupu s jedinou výjimkou. Modul VIM požádá jádro, aby neprovádělo skok na obvyklou adresu v tabulce výjimek, ale aby rovnou předalo řízení na adresu, kterou on jádru podstrčí. Tak se skočí na adresu, která odpovídá obsluze přerušení vyplněné při inicializaci. Tato funkcionalita se zapíná v jádře CORTEX-R4 pomocí bitu VE v konfiguračním registru.
+Poslední přístup předpokládá využití programem řízených přerušení. Aplikace se spoléhá pouze na sebe a funkcionalitu vektorů spravovaných modulem VIM odmítá. V takovémto případě se od aplikace očekává, že kromě zrušení žádosti o přerušení v dané periferii (časovač), zruší aplikace ještě žádost o přerušení v modulu VIM.
 Tohoto lze dosáhnout přečtením registru IRQVECREG nebo zápisem logické jedničky na příslušné umístění v registru INTREQ.
 
 \sec ETHERNET a PHY
