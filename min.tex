@@ -479,10 +479,10 @@ Náplní této diplomové práce bylo navrhnout, implementovat a začlenit podpo
 Nejprvne byly vygenerovány hlavičkové soubory.
 V době realizace diplomové práce byly jediné existující hlavičkové soubory pod licencí neakceptovatelnou otevřeným projektem RTEMS.
 Proto bylo vymyšleno a vyzkoušeno několik způsobů, jak efektivně zpracovávat text a generovat nové hlavičkové soubory.
-Dalším výstupem je taktéž generátor hlavičkových souborů podle požadavků a zvyklostí komunity RTEMS a datový formát informací o periferiích, který zachovává všechny důležitá data a zároveň je snadno čitelný a upravitelný člověkem i automatem.
+Dalším výstupem je taktéž generátor hlavičkových souborů podle požadavků a zvyklostí komunity RTEMS a datový formát informací o periferiích, který zachovává veškeré podstatné informace a zároveň je snadno čitelný a upravitelný člověkem i automatem.
 
 V dalším kroku byly hlavičkové soubory použity k implementování podpory základních periferii mikrokontroléru TMS570 do operačního systému RTEMS.
-Kromě základního čítače a seriového komunikačního rozhraní, které bylo požadováno zadáním, byla přidána podpora modulu zpravujícího vektorové přerušení (VIM) a modulu PINMUX.
+Kromě základního časovače a seriového komunikačního rozhraní, které bylo požadováno zadáním, byla přidána podpora modulu zpravujícího vektorové přerušení (VIM) a mapování periferií na piny mikrokontroléru (PINMUX).
 Detailní postup vkládání podpory zmíněných periferii do operačního systému RTEMS je v práci zdokumentován a může sloužit jako návod při vytváření podpory pro jiný mikrokontrolér.
 
 Začlenění podpory mikrokontroléru TMS570 do vývojového stromu RTEMS proběhlo úspěšně.
@@ -495,12 +495,12 @@ A ačkoliv jsou nyní hlavičkové soubory generované firmou Texas Instruments 
 
 Poslední implementační částí diplomové práce byl ovladač pro síťovou knihovnu LWIP.
 Této knihovně byla dána přednost před knihovnou BSD a původní vestavěnou síťovou knihovnou v projektu RTEMS.
-V textu této práce je podrobný návod, jak se takový ovladač implementuje a co je kritické pro jeho stabilní běh.
+V textu této práce je základní návod k implementaci LWIP ovladače a popis jeho částí kritických pro stabilní běh.
 Dokumentace knihovny LWIP je do značné míry minimalistická a proto může tato diplomová práce sloužit i jako jednoduchý úvod do fungování knihovny LWIP.
 Kromě návodu na tvorbu ovladače byl velký důraz kladen na korektní umístění a volání funkcí, efektivitu, stabilitu a přenositelnost.
 
-Implementace byla během práce i po skončení úspěšně testována serií zkušebních testu projektu RTEMS.
-{\bf Pro sítovou část byla napsána aplikace na pc, která se snažila co nejvíce zatížit testovanou desku TMS570LS31xHDK síťovou komunikací }.
+Implementace byla během práce i po skončení úspěšně testována obecnými testy již obsaženými v projektu RTEMS.
+Pro otestování ETHERNETového rozhraní a integrované podpory TCP/IP v LwIP byla napsána aplikace na počítač, která se snažila co nejvíce zatížit testovanou desku TMS570LS31xHDK.
 Během testování se vyskytlo několik zásadních problémů, ale po vyladění implementace se výsledná podoba chovala vždy podle očekávání a stabilně i při dlouhodobé zátěži.
 
 
