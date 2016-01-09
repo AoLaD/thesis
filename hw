@@ -23,7 +23,8 @@ Jádro dovoluje aplikaci přepínat mezi oběma instrukčními sadami, podle akt
 Tím je zajištěn optimální kompromis mezi výpočetní rychlostí a velikostí programového kódu.
 Obvody z řady TMS570 jsou v současné době k dispozici s integrovanou programovou pamětí typu Flash s kapacitou 1 až 2 MB a datovou pamětí 128 až 160 KB.
 
-Důležitou složkou mikrokontrolérů TMS570 je tzv. High End Timer (NHET).
+Důležitou složkou mikrokontrolérů TMS570 je tzv.
+High End Timer (NHET).
 Jedná se o přidružený časovací koprocesor, který lze programovat pomocí speciálních instrukcí.
 
 Pro snížení zatížení procesoru je možné čtení i zápis provádět pomocí DMA nebo HTU (High End Timer Transfer Unit), s využitím NHET DMA řadiče.
@@ -77,81 +78,109 @@ Periferie obsahuje několik čítačů, které mohou definovat základní časov
 Mimo jiné dovoluje periferie časovače využití některého z čítačů jako nástroj pro měření doby běhu celého programu nebo jeho úseků.
 Při používání komunikační periferie FlexRay, dovoluje modul časovače synchronizovat čas ze sběrnice FlexRay.
 
-
-
 Při poruše na sběrnici dokáže modul časovače automaticky přejít na vnitřní čas mikrokontroléru tak, aby běh operačního systému zůstal zachován.
-Součástí periferie časovače je hlídací (watchdog) periferie. Úkolem této části mikrokontroléru je po prvním nastavení hlídat běh kódu a vynutit restart nebo chybu procesoru, pokud vykonávání hlídané smyčky kódu trvá delší nebo kratší dobu.
+
+Součástí periferie časovače je hlídací (watchdog) periferie.
+Úkolem této části mikrokontroléru je po prvním nastavení hlídat běh kódu a vynutit restart nebo chybu procesoru, pokud vykonávání hlídané smyčky kódu trvá delší nebo kratší dobu.
+
 Tento modul je navržen tak, aby odpovídal požadavkům normy automobilového průmyslu OSEK.
-Obrázek XXX ukazuje základní blokový diagram RTI periferie.
 
+Obrázek \ref[timer] ukazuje základní blokový diagram RTI periferie.
 
-%\medskip
-%\clabel[fisrt]{prvni superduper obrazek}
-%\picw=13cm \cinspic img/timer.jpg
-%\caption/f prvni superduper obrazek. Obrázek vyfotil!
-%\medskip
+\medskip
+\clabel[timer]{prvni superduper obrazek}
+\picw=13cm \cinspic img/timer.jpg
+\caption/f prvni superduper obrazek. Obrázek vyfotil!
+\medskip
 
-Z obrázku je vidět, že periferie obsahuje dva nezávislé čítače pro generování rozdílných časových základen. První čítač mimo jiného pracuje i se zmíněným časovým signálem z periferie FlexRay (pokud není uspaná). Dále dokáže první čítač dohlížet na časový signál z modulu FlexRay. V případě chyby se čítač číslo jedna dokáže okamžitě přepojit na interní hodinový signál. Zbylá funkcionalita obou čítačů je stejná.
-Porovnávací jednotka porovnává čítače s naprogramovanými hodnotami a generuje čtyři různé žádosti o přerušení nebo o začátek přenosu DMA. Vstup do každé z těchto čtyřech porovnávacích jednotek může být zvolen buď z čítače jedna nebo z čítače dva.
+Z obrázku je vidět, že periferie obsahuje dva nezávislé čítače pro generování rozdílných časových základen.
+První čítač mimo jiného pracuje i se zmíněným časovým signálem z periferie FlexRay (pokud není uspaná).
+Dále dokáže první čítač dohlížet na časový signál z modulu FlexRay.
+V případě chyby se čítač číslo jedna dokáže okamžitě přepojit na interní hodinový signál.
+Zbylá funkcionalita obou čítačů je stejná.
+
+Porovnávací jednotka porovnává čítače s naprogramovanými hodnotami a generuje čtyři různé žádosti o přerušení nebo o začátek přenosu DMA.
+Vstup do každé z těchto čtyřech porovnávacích jednotek může být zvolen buď z čítače jedna nebo z čítače dva.
 
 % XXX odkaz na referenční manual
 
 \secc Sériové porty
 
-
-
-Obsluha seriových portů v mikrokontroléru tms570 je možná ze dvou periferii. V obou je obsluha sériových portů stejná, ale periferie SCI/LIN poskytuje vývojáři rozšířenou funkcionalitu o protokol LIN.
-Základní funkčností sériových periferií je tedy protokol universální asynchronní sériové komunikace (UART). LIN je protokol vycházející z protokolu UART, který podporuje komunikaci typu jeden hlavní a více vedlejších zařízeních s možností adresovat více zařízení v síti najednou.
+Obsluha seriových portů v mikrokontroléru tms570 je možná ze dvou periferii.
+V obou je obsluha sériových portů stejná, ale periferie SCI/LIN poskytuje vývojáři rozšířenou funkcionalitu o protokol LIN.
+Základní funkčností sériových periferií je tedy protokol universální asynchronní sériové komunikace (UART).
+LIN je protokol vycházející z protokolu UART, který podporuje komunikaci typu jeden hlavní a více vedlejších zařízeních s možností adresovat více zařízení v síti najednou.
 Periferie podporuje jednocestnou i oboucestnou komunikaci, dva kanály přerušení, 1-8bitů přenesených dat, volitelný devátý bit pro adresování, možnost sudé nebo liché parity a samozřejmě jeden až dva konečné bity za znakem.
 
-V dnešní energeticky úsporné době, může přijít vhod možnost probouzení mikrokontroléru přijetím zprávy.
+V dnešní energeticky úsporné době může přijít vhod možnost probouzení mikrokontroléru přijetím zprávy.
 Periferie pro obsluhu sériového portu (SCI) se skládá ze tří hlavních bloků:
 
 \begitems
 
+* Přijímač -- postupně posouvá přijaté bity v posuvném registru.
+Při dokončení přenosu budou data v registru SCIRD.
 
+* Vysílač -- Podle registru SCITD postupně, bit po bitu, nastavuje úroveň signálu na výstupním pinu mikrokontroléru.
 
-Přijímač -- postupně posouvá přijaté bity v posuvném registru. Při dokončení přenosu budou data v registru SCIRD.
-Vysílač -- Podle registru SCITD postupně, bit po bitu, nastavuje úroveň signálu na výstupním pinu mikrokontroléru.
-Generátor modulační rychlosti -- Programovatelný generátor závislý na hodinovém kanálu VBUSP.
+* Generátor modulační rychlosti -- Programovatelný generátor závislý na hodinovém kanálu VBUSP.
 
 \enditems
 
-Na obrázku XXX lze naleznout formát komunikace jednoho znaku.
+Na obrázku \ref[sci] lze naleznout formát komunikace jednoho znaku.
 
-%\medskip
-%\clabel[fisrt]{prvni superduper obrazek}
-%\picw=13cm \cinspic img/sci.jpg
-%\caption/f prvni superduper obrazek. Obrázek vyfotil!
-%\medskip
+\medskip
+\clabel[sci]{prvni superduper obrazek}
+\picw=13cm \cinspic img/sci.jpg
+\caption/f prvni superduper obrazek. Obrázek vyfotil!
+\medskip
 
-Znázorněný adresový bit je velmi důležitý pro komunikace více zařízení po sériové lince.
+Znázorněný adresový bit je velmi důležitý při usnadnění komunikace více zařízení po sériové lince.
 
 \secc Řízení přerušení
 
 Kvůli snadnější obsluze přerušení byl firmou Texas Instruments do mikrokontroléru zakomponován modul řadiče vektorových přerušení (VIM).
-Periferie, které generují žádosti o přerušení, posílají zprávy do modulu VIM. Po jejich zpracování rozhodne modul, jestli je žádost oprávněná. Po kladném vyhodnocení modul VIM pošle znamení jádru mikrokontroléru (CORTEX-R4), aby bylo provedeno přerušení.
+Periferie, které generují žádosti o přerušení, posílají zprávy do modulu VIM.
+Po jejich zpracování rozhodne modul, jestli je žádost oprávněná.
+Po kladném vyhodnocení modul VIM pošle znamení jádru mikrokontroléru (CORTEX-R4), aby bylo provedeno přerušení.
 Následně modul VIM pomáhá s jeho řízením čtyřmi rozlišnými způsoby.
 
-
-
-Nejstarší přístup pracuje tak, jak by to bylo běžné v jádře CORTEX-R4. Řízení je předáno na adresu vektoru přerušení v tabulce výjimek jádra. Úkolem obslužné rutiny je přečíst registr IRQINDEX, kam modul VIM uložil index právě probíhajícího přerušení. Tento přístup je kompatibilní se staršími mikrokontroléry jako je TMS470.
-Trošku modernější přístup automaticky připraví vektor přerušení. Nicméně je potřeba tyto vektory vyplnit před zapnutím přerušení do paměti associované s modulem VIM. Jakmile modul VIM obdrží žádost o přerušení, připraví do registru IRQVECREG adresu rutiny přerušení, kterou si načetl z předem vyplněné tabulky. Obecná obslužná rutina přerušení, která se nachází v tabulce výjimek, může pouze provést skok na adresu vyplněnou modulem VIM.
+Nejstarší přístup pracuje tak, jak by to bylo běžné v jádře CORTEX-R4.
+Řízení je předáno na adresu vektoru přerušení v tabulce výjimek jádra.
+Úkolem obslužné rutiny je přečíst registr IRQINDEX, kam modul VIM uložil index právě probíhajícího přerušení.
+Tento přístup je kompatibilní se staršími mikrokontroléry jako je TMS470.
+Trošku modernější přístup automaticky připraví vektor přerušení.
+Nicméně je potřeba tyto vektory vyplnit před zapnutím přerušení do paměti associované s modulem VIM.
+Jakmile modul VIM obdrží žádost o přerušení, připraví do registru IRQVECREG adresu rutiny přerušení, kterou si načetl z předem vyplněné tabulky.
+Obecná obslužná rutina přerušení, která se nachází v tabulce výjimek, může pouze provést skok na adresu vyplněnou modulem VIM.
 Třetí automatický přístup lze použít pouze pro obyčejná přerušení (IRQ) a ne pro přerušení s rychlou odezvou (FIQ).
 
-Postup přerušení je analogický k předchozímu přístupu s jedinou výjimkou. Modul VIM požádá jádro, aby neprovádělo skok na obvyklou adresu v tabulce výjimek, ale aby rovnou předalo řízení na adresu, kterou on jádru podstrčí. Tak se skočí na adresu, která odpovídá obsluze přerušení vyplněné při inicializaci. Tato funkcionalita se zapíná v jádře CORTEX-R4 pomocí bitu VE v konfiguračním registru.
-Poslední přístup předpokládá využití programem řízených přerušení. Aplikace se spoléhá pouze na sebe a funkcionalitu vektorů spravovaných modulem VIM odmítá. V takovémto případě se od aplikace očekává, že kromě zrušení žádosti o přerušení v dané periferii (časovač), zruší aplikace ještě žádost o přerušení v modulu VIM.
+Postup přerušení je analogický k předchozímu přístupu s jedinou výjimkou.
+Modul VIM požádá jádro, aby neprovádělo skok na obvyklou adresu v tabulce výjimek, ale aby rovnou předalo řízení na adresu, kterou on jádru podstrčí.
+Tak se skočí na adresu, která odpovídá obsluze přerušení vyplněné při inicializaci.
+Tato funkcionalita se zapíná v jádře CORTEX-R4 pomocí bitu VE v konfiguračním registru.
+Poslední přístup předpokládá využití programem řízených přerušení.
+Aplikace se spoléhá pouze na sebe a funkcionalitu vektorů spravovaných modulem VIM odmítá.
+V takovémto případě se od aplikace očekává, že kromě zrušení žádosti o přerušení v dané periferii (časovač), zruší aplikace ještě žádost o přerušení v modulu VIM.
 Tohoto lze dosáhnout přečtením registru IRQVECREG nebo zápisem logické jedničky na příslušné umístění v registru INTREQ.
+
+\secc MDIO
 
 \sec ETHERNET a PHY
 
 Adaptér pro ethernet / rychlý ethernet se v mikrokontrolérech rozděluje na dvě základní části a to na část MAC (Media Access Control), která řeší problémy na vyšší úrovni a je součástí mikrokontrolérů a na část PHY (Physical Layer Interface), která řeší fyzickou část připojení.
 
-Propojení MAC s PHY je provedeno přes synchronní paralelní rozhraní, jak je uvedeno na obrázku číslo X.
+Propojení MAC s PHY je provedeno přes synchronní paralelní rozhraní, jak je uvedeno na obrázku \ref[eth1].
 
-Obr.č. X. Schéma zapojení adaptéru pro Ethernet
+\medskip
+\clabel[eth1]{prvni superduper obrazek}
+\picw=13cm \cinspic img/eth1.jpg
+\caption/f Schéma zapojení adaptéru pro Ethernet
+\medskip
 
-Pro připojení PHY a MAC jsou k dispozici dvě varianty rozhraní. Prvním variantou rozhraním je rozhraní MII (Media Independent Interface) pracující se 4bitovou šířkou sběrnice a s časováním 25MHz. Druhá varianta RMII (Reduced Media Independent Interface) pracuje s poloviční sběrnicí, ale s dvojnásobným kmitočtem.
+
+Pro připojení PHY a MAC jsou k dispozici dvě varianty rozhraní.
+Prvním variantou rozhraním je rozhraní MII (Media Independent Interface) pracující se 4bitovou šířkou sběrnice a s časováním 25MHz.
+Druhá varianta RMII (Reduced Media Independent Interface) pracuje s poloviční sběrnicí, ale s dvojnásobným kmitočtem.
 
 MII (RMMI) dovoluje přenášet datagramy až rychlostí blížící se 100Mbit/s.
 
@@ -163,121 +192,89 @@ MAC podporuje 10/100Mbit/s přenosovou rychlost, podle normy IEEE 802.3 obsahuje
 
 U procesoru TMS570LS3137 je MAC řešen třemi základními moduly a to kontrolním modulem (EMAC kontrol module), EMAC modulem (EMAC module) a MDIO modulem (MDIO module).
 
-Jak je patrno z obrázku číslo X, je řídící modul hlavním rozhraním mezi EMAC modulem, který poskytuje rozhraní mezi jádrem procesoru a sítí a MDIO modulem, který zajišťuje řízení PHY.
+Jak je patrno z obrázku \ref[eth2], je řídící modul hlavním rozhraním mezi EMAC modulem, který poskytuje rozhraní mezi jádrem procesoru a sítí a MDIO modulem, který zajišťuje řízení PHY.
 
-Obr. Č. X MAC moduly.
+\medskip
+\clabel[eth2]{prvni superduper obrazek}
+\picw=13cm \cinspic img/eth2.jpg
+\caption/f MAC moduly
+\medskip
 
 Součástí kontrolního modulu je řízení přerušení a 8KB interní vyrovnávací paměť pro popisovače (descriptors)
 
-Obrázek číslo X dále zobrazuje rozhraní mezi EMAC řídícím modulem a procesorem (CPU).Spojení DMA sběrnice s EMAC řídícím modulem umožňuje čtení a zápis do vnitřní i vnější paměti bez využití CPU. Přerušení z modulu EMAC a MDIO jsou spojeny do čtyř signálů a přivedeny do vektorového řízení přerušení (VIM – Vectored Interrupt Manager).
+Obrázek \ref[eth2] dále zobrazuje rozhraní mezi EMAC řídícím modulem a procesorem (CPU).Spojení DMA sběrnice s EMAC řídícím modulem umožňuje čtení a zápis do vnitřní i vnější paměti bez využití CPU.
+Přerušení z modulu EMAC a MDIO jsou spojeny do čtyř signálů a přivedeny do vektorového řízení přerušení (VIM – Vectored Interrupt Manager).
 
-Obrázek číslo X zobrazuje vlastní připojení EMAC modulu a MDIO modulu s PHY. Detailní popis jednotlivých signálů je uveden v [X - SPNU499B–November 2012–Revised August 2013]
+Obrázek \ref[eth3] zobrazuje vlastní připojení EMAC modulu a MDIO modulu s PHY.
+Detailní popis jednotlivých signálů je uveden v [X - SPNU499B–November 2012–Revised August 2013]
 
-MII\_TXCLK jsou kontinuální hodiny, které poskytují referenční časování pro Tx přenos. Jmenovitá frekvence je 2,5MHz pro 10Mbit/s a 25MHz pro přenos 100Mbit/s. MII\_TXD[3-0] je vysílací paralelní sběrnice. MII\_TXEN je signál uvolnění vysílání. Jako rozšíření se může použít i signál MII\_TXER (z MAC do PHY) chyba vysílání.
+\medskip
+\clabel[eth3]{prvni superduper obrazek}
+\picw=13cm \cinspic img/eth3.jpg
+\caption/f EMac a MDIO Signály pro MII Interface
+\medskip
 
-MII\_RXCLK jsou opět kontinuální hodiny avšak pro Rx přenos. MII\_RXD[3-0] je přijímací paralelní sběrnice. MII\_RXDV je signál, že jsou k dispozici platná data [nejsem si jist] a MII\_RXER je signál chyby příjmu.
+MII\_TXCLK jsou kontinuální hodiny, které poskytují referenční časování pro Tx přenos.
+Jmenovitá frekvence je 2,5MHz pro 10Mbit/s a 25MHz pro přenos 100Mbit/s.
+MII\_TXD[3-0] je vysílací paralelní sběrnice.
+MII\_TXEN je signál uvolnění vysílání.
+Jako rozšíření se může použít i signál MII\_TXER (z MAC do PHY) chyba vysílání.
 
-MII\_COL je signál detekce kolize a MII\_CRS je signál doplnit . Tyto signály mají význam jen v half-duplex režimu.
+MII\_RXCLK jsou opět kontinuální hodiny avšak pro Rx přenos.
+MII\_RXD[3-0] je přijímací paralelní sběrnice.
+MII\_RXDV je signál, že jsou k dispozici platná data [nejsem si jist] a MII\_RXER je signál chyby příjmu.
 
-Obr.č. X EMac a MDIO Signály pro MII Interface
+MII\_COL je signál detekce kolize a MII\_CRS je signál doplnit .
+Tyto signály mají význam jen v half-duplex režimu.
 
-Redukovaná varianta MII (RMII) je na obrázku číslo X.
+Redukovaná varianta MII (RMII) je na obrázku \ref[eth4].
 
-Obr.č.X EMac a MDIO Signály pro RMII Interface
+\medskip
+\clabel[eth4]{prvni superduper obrazek}
+\picw=13cm \cinspic img/eth4.jpg
+\caption/f EMac a MDIO Signály pro RMII Interface
+\medskip
 
 \sec MDIO modul
 
-MDIO modul (Management data input output) umožňuje aplikaci získat přístup do až 32 registrů PHY zařízení pomocí dvouvodičové sběrnice (hodiny, data). MDIO rozhraní podporuje až 32 PHY zařízení. Aplikace může vybrat jeden libovolný registr v kterémkoliv PHY a posílat řídící data a přijímat informace o stavu. Avšak pouze jeden registr v jednom PHY zařízení může být adresován v jeden okamžik.
+MDIO modul (Management data input output) umožňuje aplikaci získat přístup do až 32 registrů PHY zařízení pomocí dvouvodičové sběrnice (hodiny, data).
+MDIO rozhraní podporuje až 32 PHY zařízení.
+Aplikace může vybrat jeden libovolný registr v kterémkoliv PHY a posílat řídící data a přijímat informace o stavu.
+Avšak pouze jeden registr v jednom PHY zařízení může být adresován v jeden okamžik.
 
-Maximální frekvence hodinového signálu MDIO\_CLK je 2,5MHz. MDIO\_D signál je oboustranný a umožňuje jak čtení, tak zápis. Na obrázku číslo X je zobrazena datová struktura zprávy (frame).
+Maximální frekvence hodinového signálu MDIO\_CLK je 2,5MHz.
+MDIO\_D signál je oboustranný a umožňuje jak čtení, tak zápis.
+Na obrázku \ref[eth5] je zobrazena datová struktura zprávy (frame).
 
-Obr.č. X Struktura MDIO zprávy
+\medskip
+\clabel[eth5]{prvni superduper obrazek}
+\picw=13cm \cinspic img/eth5.jpg
+\caption/f Struktura MDIO zprávy
+\medskip
 
-Preamble je inicializační pole a používá se k synchronizaci s PHY zařízením. PADDR je 5bitová adresa PHY zařízení a RADDR je 5bitová adresa registru. TA bity slouží k oddělení datového pole, aby se zabránilo k připojení během transakce čtení. Pro transakci čtení nastavuje MAC pro první i druhý TA bite vysokou impedanci na datovém vodiči (MDIO\_D). PHY zařízení musí nechat na prvním bitě TA vysokou impedanci (je nastaven jako vstup) a druhý bit TA nastaví na nulu (na logickou nulu). Pro transakci zápisu MAC zařízení nastavuje TA bity na hodnotu „10“ a PHY zařízení se musí nastavit do vysoké impedance pro oba bity TA.
 
-Na obrázku číslo X a X jsou zobrazeny časové průběhy přenášených dat při transakci zápisu (X) a při transakci čtení (X).
+Preamble je inicializační pole a používá se k synchronizaci s PHY zařízením.
+PADDR je 5bitová adresa PHY zařízení a RADDR je 5bitová adresa registru.
+TA bity slouží k oddělení datového pole, aby se zabránilo k připojení během transakce čtení.
+Pro transakci čtení nastavuje MAC pro první i druhý TA bite vysokou impedanci na datovém vodiči (MDIO\_D).
+PHY zařízení musí nechat na prvním bitě TA vysokou impedanci (je nastaven jako vstup) a druhý bit TA nastaví na nulu (na logickou nulu).
+Pro transakci zápisu MAC zařízení nastavuje TA bity na hodnotu „10“ a PHY zařízení se musí nastavit do vysoké impedance pro oba bity TA.
 
-Obr.č. X MDIO časování – transakce zápis
+Na obrázku číslo \ref[eth6] a \ref[eth7] jsou zobrazeny časové průběhy přenášených dat při transakci zápisu (\ref[eth6]) a při transakci čtení (\ref[eth7]).
 
-Obr.č. X MDIO časování – transakce čtení
+\medskip
+\clabel[eth6]{prvni superduper obrazek}
+\picw=13cm \cinspic img/eth6.jpg
+\caption/f MDIO časování – transakce zápis
+\medskip
 
-MAC 802.3 format rámce (frame format)
+\medskip
+\clabel[eth7]{prvni superduper obrazek}
+\picw=13cm \cinspic img/eth7.jpg
+\caption/f MDIO časování – transakce čtení
+\medskip
 
-MAC zařízení implementuje dva formáty rámce, které jsou určeny pro datové přenosy pomocí CSMA/CD a to základní MAC rámec a Tagged MAC rámec (rozšíření základního formátu MAC rámce) podle normy IEEE802.3:2002.
-
-Obrázek číslo X a X popisuje strukturu rámce (untegged a tagged).
-
-Obr. č. X Formát MAC rámce
-
-Obr. č. X Formát Tagged MAC rámce
-
-Preamble je stejně jako u MDIO rámce inicializační pole a používá se k synchronizaci. Má však odlišnou hodnotu a to vyjádřeno hexadecimálně 55-55-55-55-55-55-55. SFD (Start Frame Delimiter) je používán k indikaci startu rámce. Cílové a zdrojové adresy (Destination address, Source address) jsou 6ti bytové pole a obsahují adresu zdrojové a cílové stanice v síti. Adresa je složena ze 46 bitů vlastní adresy, z I/G bitu (popisuje, jestli se jedná o individuální adresu, nebo skupinovou) a U/L bitu (lokální, nebo globální adresa) viz obrázek číslo X.
-
-Obr. Č. X Formát adresního pole.
-
-MAC klient lenght/type je dvou bajtové pole s různým významem v závislosti na obsažených hodnotách. V případě, že je hodnota menší, nebo rovna maxValidFrame (0d1500), pak hodnota obsažená v poli udává
-
-MAC client length/type: 2-byte field with different meaning (mutually exclusive),
-
-depending on its value:
-
-– If the value is less than or equal to maxValidFrame (0d1500) then this field
-
-indicates the number of MAC client data bytes contained in the subsequent data
-
-field of the 802.3 frame (length interpretation).
-
-– If the value is greater than or equal to MinTypeValue (0d1536 decimal, 0x0600)
-
-then this field indicates the nature of the MAC client protocol (Type interpretation)
-
-related to the Ethernet frame.
-
-Regardless of the interpretation of the length/type field, if the length of the data field is
-
-less than the minimum required for proper operation of the protocol, a PAD field is
-
-added after the data field but prior to the FCS (frame check sequence) field. The
-
-length/type field is transmitted and received with the higher-order byte first.
-
-For length/type field values in the range between maxValidLength and minTypeValue
-
-(boundaries excluded), the behavior of the MAC sublayer is not specified: they may or
-
-may not be passed by the MAC sublayer.
-
-Data a PAD položky jsou datovými poli. Úplná transparentnost dat je k dispozici, to znamená, že
-
-libovolná posloupnost hodnot se může objevit v datovém poli. Velikost PAD, pokud existuje, je určena podle velikosti datového pole. Maximální délka dat a PAD pole je 1500bajtů. Minimální délka dat a PAD pole je pro untagged rámce 46bajtů a 42 bajtů pro tagged rámce. Když je délka datového pole menší než požadované minimum, PAD pole je přidáno do odpovídající minimální délky (42 bajtů tagged rámce, 46 bajtů pro untagged rámec).
-
-Poslední položkou rámce je 4 bajtový kontrolní součet, tzv. CRC (Cyclic redundancy check). CRC je vypočítáváno ze všech položek, mimo Preamble a SFD. Generující polynom je:
-
-G(x) = x32 + x26 + x23 + x22 + x16 + x12 + x11 + x10 + x8 + x7 + x5 + x4 + x2 + x + 1
-
-QTag Prefix: 4-byte field inserted between the Source address field and the MAC Client
-
-Length/Type field. This field is an extension of the basic frame (untagged) to obtain the
-
-tagged MAC frame. The untagged MAC frames do not include this field. The
-
-extensions for tagging are as follows:
-
-– 2-byte constant Length/Type field value consistent with the Type interpretation
-
-1.1.1. (greater than 0x0600) equal to the value of the 802.1Q Tag Protocol Type (0x8100PHY
-
-hexadecimal). This constant field is used to distinguish tagged and untagged MAC
-
-frames.
-
-– 2-byte field containing the Tag control information field subdivided as follows: a 3-
-
-bit user priority, a canonical format indicator (CFI) bit and a 12-bit VLAN Identifier.
-
-1.1.1. The length of the tagged MAC frame is extended by 4 bytes by the QTag Prefix.
-
-1.1.2. DP83848
+\sec DP83848
 
 DP83348 je PHY od společnosti Texas Instruments.
 
@@ -290,4 +287,22 @@ Jsou možné dva druhy připojení, jak bylo uvedeno výše u MAC a to MII a RMI
 Standardní MII má malou sadu registrů od adresy 0h do adresy 7h
 
 \sec Vývojový kit TMS570
+
+Vývojový kit TMS570LS31 společnosti Texas Instrumens poskytuje hardwarovou platformu k ověření funkčnosti procesorů rodiny TMS570LS a je určen zejména k usnadnění vývoje zákaznického hardware a software a tím snížení doby uvedení na zákaznický trh.
+
+\secc  Popis kitu
+
+Podrobné informace k vývojovému kitu společnosti Texas Instrumens jsou dostupné v X a v X, včetně elektrického schématu a plošného spoje.
+
+Vývojový kit je založen na procesoru TMS570LS31.
+Na obrázku \ref[eth11] je blokové schéma vývojového kitu. 
+
+\medskip
+\clabel[eth11]{prvni superduper obrazek}
+\picw=13cm \cinspic img/eth11.jpg
+\caption/f Blokové schéma vývojového kitu TMS570LS31 HDK
+\medskip
+
+Vývojový kit obsahuje Hercules TMS570LS3137 337-pin BGA mikrokontroler, 10/100Mbit Ethernet interface s PHY DP83640, externí JTAG konektor, UART, 8MB SDRAM, slot pro SD kartu přes SPI sběrnici, napájení od +5V do +12V @ 130mA.
+Podrobnější specifikace je uvedena v X. 
 
