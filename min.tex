@@ -224,43 +224,44 @@ Na mikrokontroléru TMS570 jde tento problém vyřešit pomocí periferie POM, k
 
 \secc        Sériové porty
 
-Prvním krokem při začátku vývoje nové aplikace obvykle bývá počáteční test typu Ahoj světe.
+Prvním krokem při přidávání podpory nové platformy, portaci operačního systému nebo testování nového programovacího jazyka obvykle bývá počáteční test typu Ahoj světe.
 Jedním z nejjednodušších možností, jak z programu uvnitř mikrokontroléru TMS570 pozdravit okolní svět, je pomocí periferie SCI (sériového komunikačního rozhraní).
 
 Základní způsob komunikace s SCI periferii je velmi jednoduchý.
 Stačí na příslušné místo v paměti, registr TD (pošli data) v periferii SCI, zapsat písmeno, které se odešle na sběrnici.
-Dále je pak před každým zápisem nutno kontrolovat příznak, jestli se již stihla odeslat předchozí data.
+Dále je pak před každým dalším zápisem nutno kontrolovat příznak, jestli se je v periferii místo na zapsání dalšího znaku.
 Příznaky přenosu můžeme naleznout v registru FLR v periferii SCI.
 V tomto případě stačí kontrolovat příznak TX EMPTY (prázdný výstupní buffer).
 
 Po restartu mikrokontroléru jsou parametry komunikace nastaveny na použití jednoho stopbitu, bez použití parity s délkou přenášených dat 1 bit.
-Toto nastavení jistě nepatří mezi ideální, proto je vhodné periferii SCI nastavit.
+Toto nastavení nemusí odpovídat aplikací požadovanému nastavení a proto je potřeba přidat podporu mechanizmu, kterým si aplikace může zažádat o nastavené požadovaných parametrů.
 Počet stopbitů a paritu najdeme v registru GCR1.
 Délku přenášených a očekávaných dat můžeme hledat v registru FORMAT a nastavení rychlosti v registru BRS.
 Dále je ještě důležité nastavení přerušení v registru SETINT.
 
-Po zvládnutí práce s periferií nastává čas pro implementaci její podpory do operačním systému RTEMS.
-V případě, že je používána konzole, operační systém RTEMS při inicializaci volá funkci console\_initialize.
+Po zvládnutí práce s periferií nastává čas pro integraci její podpory do operačním systému RTEMS.
+V případě, že v konfiguraci aplikace je nastaven příznak informující o potřebě použití konzole, operační systém RTEMS při inicializaci volá funkci console\_initialize.
 V této funkci je potřeba inicializovat termios a zaregistrovat ty sériové porty, které zařízení podporuje.
 V tomto případě se jedná o periferii SCI a periferii LIN, která taktéž dokáže komunikovat po sériové lince.
 Registrace se provádí funcí rtems\_termios\_device\_install.
 Funkce má dva důležité vstupy.
-Odkaz na strukturu registrovaného portu, kterou bude operační systém předávat dále, a tabulku funkcí, které se mohou volat při operacích z operačního systému.
+Odkaz na strukturu registrovaného portu, kterou bude operační systém předávat dále, a tabulku funkcí, které operační systém bude volat.
 Tyto funkce je potřeba implementovat.
-Jedná se hlavně o funkce inicializace a deinicializace při prvním respektive posledním použití, čtení znaku, poslání znaku a nastavení parametrů přenosu.
+Jedná se především o funkce inicializace a deinicializace při prvním respektive posledním použití, čtení znaku, poslání znaku a nastavení parametrů přenosu.
 Pro potřeby této diplomové práce byly tyto funkce ještě rozvětveny na případy, kdy se pro tok dat využívá přerušení a kdy ne.
 
 Funkce nastavení parametrů obsahuje pouze práci s registry popsanými výše.
-Chtěné nastavení portu do funkce přichází z operačního systému ve struktuře termios.
+Parametry pro nastavení portu do funkce předává operační systém pomocí struktury termios.
 Během vykonávání funkce je vhodné port zamknout pomocí rtems\_termios\_device\_lock\_acquire.
 
 Funkce pro otevření a zavření portu jsou zodpovědné za nastavení přerušení v periferii SCI a za registrování přerušení v operačním systému RTEMS.
 
-Pro úplnou funkčnost ovladače je přidána podpora funkce printk.
+Pro kompletní funkčnost ovladače je přidána podpora funkce printk.
 Toho je obvykle funkce, kterou používá jádro operačních systémů pro tisknutí ladících informací, chyb a podobných kritických dat.
-Funkce printk by neměla používat přerušení, protože může být potřeba v době, kdy přerušení nefungují.
+Funkce printk by neměla používat přerušení, protože může být potřeba v době, kdy přerušovací subsystém není ještě konfigurovaný.
+Mezi další použití funkce printk patří ladění uvnitř přerušení nebo v kritickém stavu operačního jádra.
 Podpora funkce printk je přidána do druhého souboru a oddělena od ovladače seriových portů.
-Do jádra systému RTEMS se vkládá pomocí proměné BSP\_output\_char.
+Do jádra systému RTEMS se vkládá pomocí definice BSP\_output\_char.
 
 \secc        Časovač
 
