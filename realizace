@@ -1,28 +1,3 @@
-%def\ctustyle{{\tenss CTUstyle}}
-%\def\ttb{\tt\char`\\} % pro tisk kontrolních sekvencí v tabulkách
-
-\input ctustyle
-\worktype [M/CZ]
-\faculty {F3}
-\department {Katedra Řídící techniky}
-\title {Portace real-time systému RTEMS na rodinu mikrokontrolérů TMS570}
-\author {Přemysl Houdek}
-\supervisor {Ing. Pavel Píša Ph.D.}
-\date {Leden 2016}
-\abstractEN {XXX}
-\abstractCZ {XXX}
-\declaration {
-Prohlašuji, že jsem předloženou práci vypracoval samostatně a že jsem uvedl veškeré použité informační zdroje v souladu s Metodickým pokynem o dodržování etických principů při přípravě vysokoškolských závěrečných prací.
-\medskip
-   V~Praze~dne~11.1.2016
-   \signature 
-}
-\keywordsCZ{XXX}
-\keywordsEN{XXX}
-\thanks {XXX}
-%\draft
-\linespacing=1.5
-\makefront
 \chap Úvod
 
 Tato diplomová práce si klade za cíl navrhnout, implementovat a začlenit podporu mikrokontroleru TMS570 od firmy Texas Instruments do operačního systému RTEMS.
@@ -65,7 +40,9 @@ Toto vše je zakončeno testováním výsledné realizace.
 
 Závěr poté už jen shrnuje výsledky diplomové práce.}
 
-\input teorie2
+\input hw
+
+\input sw
 
 \chap Realizace
 
@@ -516,7 +493,3 @@ Během testování se vyskytlo několik zásadních problémů, ale po vyladěn�
 %\picw=13cm \cinspic img/_MG_5384.jpeg
 %\caption/f prvni superduper obrazek. Obrázek vyfotil!
 %\medskip
-
-\bye
-\grid
-
