@@ -450,7 +450,58 @@ Jediná možnost, jak si být jistý korektností použití pbuf\_alloc, je poč
 
 \sec Testování
 
+Testování v rámci této diplomové práce probíhalo v několika cyklech.
+Během implementování byly periodicky zapínány testy poskytnuté operačním systémem RTEMS.
+Tyto testy testy jsou ve složce testsuit/samples.
+Pro účely testování síťové komunikace byl vyvinut další software běžící na osobním počítači.
+Program se snažil zjistit celkovou propustnost, rychlost a správnost sítové komunikace.
 
+Během testování a implementace se bylo potýkáno s několika významnými problémy.
+
+\medskip
+Kód programu se špatně nahrával do paměti procesoru. Jednalo se pouze o nahrávání a běh z externí paměti. Z vnitřní paměti flash stejný kód běžel bezchybně.
+
+Chyba byla způsobena pravděpodobně špatnou funkčností instrukce pro vícebytový přístup k externí paměti.
+
+Chyba se opravila programováním a kontrolováním kódu byte po bytu.
+
+Při běhu aplikace tuto chybu odhalovalo samotné jádro, protože zpravidla na konci programových sekcí byly neplatné instrukce, případně skoky na nesmyslná místa v paměti.
+
+\medskip
+Implementace podpory časovače a konzole probíhala v několika opakováních, protože jejich podpora se v operačním systému měnila.
+Toto není nic kritického a je to běžné v rozsáhlých projektech.
+Nakonec smyslem otevřených projektů je, aby různí vývojáři sami opravovali stávající porušenou funkcionalitu při přechodu na nové verze.
+
+\medskip
+
+Podstatná rána byla implementaci uštědřena při testování funkčnosti LwIP knihovny.
+Po zahájení komunikace modulem EMAC začal operační systém registrovat přicházející přerušení s neexistujícím indexem nula.
+Stále není jisté, co je příčinou tohoto chování.
+Experimentálně bylo vyzkoušeno, že modul EMAC opravdu vnitřně oznámí modulu VIM, že žádá o přerušení.
+Modul VIM přerušení uzná, přeruší jádro CORTEX--R4 a řízení se předá do obslužné rutiny.
+Bohužel, když se rutina dotazuje, které přerušení je aktivní, tak modul VIM žádné přerušení nehlásí.
+A to ani přestože, hned po vyvolání přerušení a zkontrontrolování modulu VIM se modul choval standardně.
+
+Prvním řešením bylo přidání vyjímky do tabulky přerušení a pro kanály odpovídající příchozímu i odchozímu rámci v periferii EMAC přidat vlastní obslužnou rutinu.
+Takováto rutina si na zásobník uložila dodatečné informace a předala řízení klasické obslužné rutině přerušení.
+Teto řešení se ve výsledné implemtantaci nepoužilo, protože bylo potřeba pracovat s nestandartními vyjímkami v operačním systému.
+
+Čistějším řešením bylo přepsat implementaci na použití jiného modelu řízení přerušení.
+Ukázalo se, že tato chyba neplatí pro model řízení, kdy se periferie VIM nepoužívá.
+
+\medskip
+
+Dalším poněkud nečekaným problémem při testování sítové komunikace bylo náhodné zamrzávání aplikace při obvyklém umístění paměti pro struktury pbuf.
+Místo pro struktury pbuf je staticky alokováno a původně se umísťovalo do stejné paměti jako programovaný kód, tedy externí paměti.
+Vzhledem k velikosti tohoto místa by bylo téměř vždy vhodné, aby se umístilo do větší externí paměti.
+
+Řešením tohoto problému byla vyjímka v ovladači LwIP, která určovala přesné místo alokace struktury do vnitřní datové paměti.
+Knihovna LwIP je na tuto alternativu dobře připravena a proto se jednalo hlavně o konfigurační problém.
+
+\medskip
+
+Zběžné testování nové revize mikrokontroléru TMS570 ukazují, že některých ze zmíněných chyb mohlo být vyvarováno použitím novější revize mikrokontroléru.
+Tím by odpadly problémy například s nahráváním programu do externí paměti nebo by již nebylo nutné přemístovat struktury pbuf do vnitřní paměti.
 
 \chap Závěr
 
