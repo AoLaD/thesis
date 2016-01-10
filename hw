@@ -1,13 +1,5 @@
 \chap Hardware
 
-\sec CORTEX--R4
-
-\secc architektura
-
-\secc rozdily oproti M3
-
-\secc Vyjímky
-
 \sec TMS570LS
 
 \secc Microkontroléry firmy Texas Instruments
@@ -163,7 +155,14 @@ Aplikace se spoléhá pouze na sebe a funkcionalitu vektorů spravovaných modul
 V takovémto případě se od aplikace očekává, že kromě zrušení žádosti o přerušení v dané periferii (časovač), zruší aplikace ještě žádost o přerušení v modulu VIM.
 Tohoto lze dosáhnout přečtením registru IRQVECREG nebo zápisem logické jedničky na příslušné umístění v registru INTREQ.
 
-\secc MDIO
+\sec ARM CORTEX--R4
+
+Procesory ARM je dnes možné najít téměř ve všech oblastech spotřební elektroniky, jako jsou mobilní telefony, PDA, kalkulačky, herní konzole, routery, multimediální přehrávače, roboty a spousta dalších.
+Mezi jejich hlavní přednosti patří poměrně velký výpočetní výkon, malá spotřeba a malá velikost kódu.
+Těchto vlastností je s výhodou využíváno nejen ve vestavěných zařízeních.
+
+Bohužel podrobnější informace o jádře CORTEX--R4 patří pod licenci firmy ARM Holdings Ltd a proto se teoretickému fungování jádra CORTEX--R4 tato práce nezabívá.
+%odkaz na referenční manual
 
 \sec ETHERNET a PHY
 
