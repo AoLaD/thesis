@@ -1,6 +1,7 @@
 \chap Úvod
 
 Tato diplomová práce si klade za cíl navrhnout, implementovat a začlenit podporu mikrokontroleru TMS570 od firmy Texas Instruments do operačního systému RTEMS.
+\medskip
 
 Do operačnímu systému je potřeba začlenit podporu obsluhy základních periferii.
 Pro zprovoznění operačního systému RTEMS na nové hardwarové platformě je minimálně nutná implementace periferie časovače a obsluha sériových portů.
@@ -54,6 +55,7 @@ XXX Text úvodu do realizace.
 Jediné existující hlavičkové soubory byly pod licencí TI, která byla nekompatibilní s licencí operačního systému RTEMS.
 Důsledkem nekompatibility licencí byla nemožnost přijmout hlavičkové soubory od firmy Texas Instruments do oficiálního vývojového stromu RTEMS.
 Mezi cíle této diplomové práce tedy patří návrh a vytvoření vlastních hlavičkových souborů pod licencí kompatibilní s projektem RTEMS.
+\medskip
 
 Použití veřejně dostupného popisu registrů, který je součástí referenčních manuálů, bylo vyhodnoceno jako jediný právně a licenčně bezrizikový způsob získání potřebných souborů.
 Pro vytvoření hlavičkového souboru shodného s hlavičkovým souborem od firmy Texas Instruments stačilo vyextrahovat jméno registru, popis a jeho umístění v paměti mikrokontroleru.
@@ -66,12 +68,14 @@ Mezi hlavní kritéria generátoru hlaviček patřila rychlost extrakce dat a tv
 Dále pak korektnost vyextrahovaných dat.
 Hlavičkové soubory jsou používané programátory s předpokladem, že jsou správné.
 Hledání i jen jediné drobné chyby může zpomalit vývoj nové aplikace o několik týdnů.
+\medskip
 
 V rámci práce byla vyzkoušena efektivita a korektnost následujících několika přístupů.
 
 \secc Ruční extrakce
 
 	Nejprve se nabízí extrakce dat z referenčního manuálu ručním kopírováním.
+\medskip
 
 Mezi výhody tohoto přístupu patří absolutní kontrola nad zpracovávanými daty.
 Mezi nevýhody patří časová náročnost a nemožnost snadného opakování.
@@ -81,6 +85,7 @@ Vytvoření jednoho hlavičkového souboru znamená mnoho hodin monnotoního kop
 
 	Dalším možným přístupem je extrakce dat z referenčního manuálu za pomoci pouze naprogramovaného kódu.
 Výhodou tohoto přístupu je snadná opakovatelnost a relativně jednoduché převedení na generování hlaviček pro jiný mikrokontroler od firmy Texas Instrument.
+\medskip
 
 Referenční manuál se pomocí otevřených nástrojů převedl z formátu PDF do formátu čistého textu.
 Tento text se následně mohl zpracovávat skriptovacím jazykem Python.
@@ -96,12 +101,14 @@ Ze třetí nejmodernější verze nejde tímto způsobem vyextrahovat ani jeden 
 
 	Cílem dalšího přístupu byla snaha zůstat u automatického generování hlavičkových souborů tak, aby se snadno mohla měnit jejich cílová podoba.
 Avšak přístup k extrakci dat z referenčního manuálu byl odlišný.
+\medskip
+
 Hlavní myšlenkou bylo zůstat u formátu PDF, který zachovává všechny informace o poloze textu.
 Způsob jak s těmito informacemi pracovat vyžaduje využití člověka nebo použití pokročilých rozpoznávacích metod pro zpracování obrazu.
 
 Rozpoznávání obrazu bylo vyzkoušeno pomocí otevřeného projektu Poppler a několika dalších nepříliš udržovaných utilit.
 
-
+\medskip
 Po těchto experimentech byl nakonec použitý postup kombinující zautomatizovaný výběr do schránky a další zpracování v jazyce Python.
 Formát výstupních dat ze scriptu je snadno modifikovatelný.
 Script využívá jazyka Autohotkey a běží v operačním systému.
@@ -117,12 +124,12 @@ Tato metoda byla použita pro její nejlepší poměr mezi časem stráveným ex
 
 \secc Budoucí rozšíření
 
-	{\bf Naposledy zmíněný postup je snadno replikovatelný a použitelný v praxi. }
-Avšak pro případy potřeby extrahovat data k vícero mikrokontrolérům byl navržen ještě jeden komfortnější přístup. %TO BE CON
+	{\bf Naposledy zmíněný postup je snadno replikovatelný a použitelný v praxi. Avšak pro případy potřeby extrahovat data k vícero mikrokontrolérům byl navržen ještě jeden komfortnější přístup.  }%TO BE CON
 
 \sec Generování hlavičkových souborů
 
 	Generátor je napsaný v jazyce Python s použitím objektového přístupu.
+\medskip	 
 Generátor je rozdělený na dvě části.
 První část je specifická pro tento projekt.
 Druhá část je obecná a mohla by sloužit ke generování libovolných hlavičkových souborů akceptovatelných RTEMS komunitou.
@@ -165,6 +172,7 @@ Možné fyzické hodnoty bitového pole se do hlaviček prozatím nedostaly.
 \sec Start operačního systému
 
 	Tato sekce je zaměřena na efektivní start operačního systému RTEMS.
+\medskip
 
 	Předání řízení opearčnímu systému RTEMS je realizováno skokem na symbol XXX.
 Tento skok nemůže být proveden hned po startu mikrokontroléru, protože je potřeba mikrokontrolér připravit na běh aplikace a tato funkcionalita v operačním systému RTEMS není obsažena.
@@ -194,7 +202,12 @@ Na mikrokontroléru TMS570 jde tento problém vyřešit pomocí periferie POM, k
 
 \sec Návrh a začlenění TMS570 do RTEMS
 
-%TO BE CON
+V této části diplomové práce lze naleznout popis adresářové struktury projektu RTEMS a typografické požadavky vyžadované komunitou.
+\medskip
+
+
+
+
 
 \sec Zprovoznění základních periférií v RTEMS
 
@@ -202,6 +215,7 @@ Na mikrokontroléru TMS570 jde tento problém vyřešit pomocí periferie POM, k
 
 Prvním krokem při přidávání podpory nové platformy, portaci operačního systému nebo testování nového programovacího jazyka obvykle bývá počáteční test typu Ahoj světe.
 Jedním z nejjednodušších možností, jak z programu uvnitř mikrokontroléru TMS570 pozdravit okolní svět, je řešení pomocí periferie SCI (sériového komunikačního rozhraní).
+\medskip
 
 Základní způsob komunikace s SCI periferii je velmi jednoduchý.
 Stačí na příslušné místo v paměti, registr TD (pošli data) v periferii SCI, zapsat písmeno, které se odešle na sběrnici.
@@ -243,6 +257,7 @@ Do jádra systému RTEMS se vkládá pomocí definice BSP\_output\_char.
 
 	Časovač je periferie, která je zásadní pro správné fungování operačního systému.
 Operační systém pomocí časovače řídí přidělování času úlohám a inicializuje přepínání úloh. 
+\medskip
 
 V mikrokontroléru TMS570 je hlavní časovací jednotka pro podporu operačních systémů nazývána RTI.
 Periferie RTI obsahuje dva nezávislé 64bitové čítače, podporu synchronizace s komunikací na sběrnici FlexRay a mnohé další.
@@ -267,6 +282,8 @@ Jako poslední se nastaví povolení přerušení v registru SETINTENA.
 \secc    Pinmux
 
 Periferie Pinmux slouží jako prostředník mezi téměř všemi periferiemi mikrokontroleru a výstupními piny.
+\medskip
+
 V dnešní době je počet vstupně výstupních pinů mikrokontrolérů důležitý parametr.
 Počet pinů je většinou spjatý s počtem zařízení, které bude mikrokontroler schopen obsluhovat či kontrolovat.
 Bohužel pouzdro PQFP s fyzickými piny pro mikrokontrolér je jedna z podstatných složek ceny mikrokontroléru.
@@ -282,6 +299,8 @@ Taktéž by podpora této periferie byla nutná pro případný start operační
 
 Vektorový modul přerušení (VIM) je zásadní pro asynchronní obsluhu vnějších událostí.
 Modul VIM rozhoduje o prioritě jednotlivých přerušení, informuje o posledním přerušení a řídí možnosti probuzení po události.
+\medskip
+
 
 Z teorie je zřejmé, že jádro mikrokontroléru CORTEX--R4 podporuje práci s přerušeními.
 CORTEX-4R rozděluje přerušení na rychlé (FIQ) a nornální (IRQ).
@@ -389,6 +408,7 @@ Po tomto nastavení je periferie EMAC připravena k použití a při vyplnění 
 
 Tato část ovladače spojuje knihovnu LwIP s hardwarovým rozhraním mikrokontroleru TMS570.
 Cílem je vytvořit datové struktury pro přenos dat mezi zmíněnými rozhraními a příslušnou funkcionalitu pro jejich obsluhu.
+\medskip
 
 Knihovna LwIP na vstupu očekává zřetězený seznam typu pbuf, který obsahuje všechny nově přijaté pakety určené ke zpracování.
 Na výstupu očekává knihovna LwIP funkci, která podobný zřetězený seznam odešle.  

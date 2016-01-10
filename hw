@@ -224,7 +224,7 @@ MII\_RXCLK jsou opět kontinuální hodiny avšak pro Rx přenos.
 MII\_RXD[3-0] je přijímací paralelní sběrnice.
 MII\_RXDV je signál, že jsou k dispozici platná data a MII\_RXER je signál chyby příjmu.
 
-MII\_COL je signál detekce kolize a MII\_CRS je signál doplnit .
+MII\_COL je signál detekce kolize a MII\_CRS informuje o komunikaci na sbernici.
 Tyto signály mají význam jen v half-duplex režimu.
 
 Redukovaná varianta MII (RMII) je na obrázku \ref[eth4].
