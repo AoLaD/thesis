@@ -130,8 +130,7 @@ UDP protokol je zejména vhodný pro nasazení u časově kritických aplikací 
 
 \secc Prezentační vrstva (presentation layer)
 
-Úkolem prezentační vrstvy je transformovat data do tvaru, které používají aplikace.
-Dopsat doma z knihy
+{ \bf Úkolem prezentační vrstvy je transformovat data do tvaru, které používají aplikace.}
 
 \secc Aplikační vrstva ( application layer)
 
