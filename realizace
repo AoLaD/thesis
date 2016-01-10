@@ -202,12 +202,37 @@ Na mikrokontroléru TMS570 jde tento problém vyřešit pomocí periferie POM, k
 
 \sec Návrh a začlenění TMS570 do RTEMS
 
-V této části diplomové práce lze naleznout popis adresářové struktury projektu RTEMS a typografické požadavky vyžadované komunitou.
+V této části diplomové práce lze naleznout popis adresářové struktury projektu RTEMS.
 \medskip
 
+Z projektového adresáře RTEMS je stále ještě patrné, že programovací jazyk C nebyl jeho první volnou.
+V kořenovém adresáři je možné mimo configuračních a instalačních skriptů objevit i testovací příklady.
 
+Tato diplomová práce se zabívá přidáním podpory a tedy podpůrných kódů pro mikrokontrolér TMS570 (BSP).
+Jádro mikrokontroléru ARM již bylo projektem RTEMS podporováno a složka pro BSP založené na arm jádře je umístěna v rtems/c/src/lib/libbsp/arm.
+Pokud by byla potřeba přidat úplně nová architektura, musela by se vytvořit příslušná složka v rtems/c/src/lib/libbsp ale hlavně i v rtems/c/src/lib/libcpu.
+Složka libcpu obsahuje definice a podporu různých modelů jader mikrokontrolérů. Jako typický příklad lze uvést obsluhu paměti CACHE nebo způsob přímého přístupu do paměti (DMA).
+Obojí je charakteristické právě pro jádro mikrokontroléru a tímto způsobem mohou dva mikrokontroléry od konkurenčních firem se stejným jádrem sdílet stejný kód.
 
+Pro založení nového BSP je typicky nejvhodnější použít existující, dobře držované BSP a to zkopírovat.
+Odpovědností vývojáře je postupně upravovat soubr README, do které patří informace o aktuálním stavu BSP.
+Dále by měl soubor README obsahovat návod, jak nejjednodušeji BSP použít v reálné aplikaci a co všechno může být konfigurováno.
 
+V souboru configure.ac je možnost nastavit programové definice, které jsou později předány do zkompilované aplikace.
+Pro správné fungování operačního systému je zde potřeba nastavit například minimální velikost vlákna nebo hodinovou frekvenci mikrokontrolérů.
+Jak je vidět, všechny informace v této složce budou silně platformově závislé.
+
+Pokyny jak zkompilovat právě vytvářené BSP obsahuje soubor Makefile.am. Zde je nutné nezapomenout na přidání skriptu pro linker pomocí:
+
+\begtt
+
+EXTRA_DIST += startup/linkcmds.tms570ls3137_hdk_sdram
+
+\endtt
+
+Zbylá organizace složky už je na uvážení vývojáře.
+V této práci bylo dbáno, aby byla rozdělena do složek podle logické funkcionality s jednou společnou složkou pro hlavičkové soubory.
+Cestu ke každému zdrojovému a hlavičkovému souboru je potřeba popsat v Makefile.am.
 
 \sec Zprovoznění základních periférií v RTEMS
 
