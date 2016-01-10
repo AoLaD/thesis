@@ -223,7 +223,7 @@ Jako rozšíření se může použít i signál MII\_TXER (z MAC do PHY) chyba v
 
 MII\_RXCLK jsou opět kontinuální hodiny avšak pro Rx přenos.
 MII\_RXD[3-0] je přijímací paralelní sběrnice.
-MII\_RXDV je signál, že jsou k dispozici platná data [nejsem si jist] a MII\_RXER je signál chyby příjmu.
+MII\_RXDV je signál, že jsou k dispozici platná data a MII\_RXER je signál chyby příjmu.
 
 MII\_COL je signál detekce kolize a MII\_CRS je signál doplnit .
 Tyto signály mají význam jen v half-duplex režimu.
@@ -277,15 +277,9 @@ Na obrázku číslo \ref[eth6] a \ref[eth7] jsou zobrazeny časové průběhy p�
 
 \sec DP83848
 
-DP83348 je PHY od společnosti Texas Instruments.
+DP83348 je modul PHY od společnosti Texas Instruments. Tento modul podporuje obě zmíněné možnosti připojení (MII a RMII).
 
-1.1.3. PHY a možné druhy připojení
-
-Jsou možné dva druhy připojení, jak bylo uvedeno výše u MAC a to MII a RMII.
-
-1.1.4. Registry a nastavení
-
-Standardní MII má malou sadu registrů od adresy 0h do adresy 7h
+Standardní MII má sadu registrů od adresy 0h do adresy 7h
 
 \sec Vývojový kit TMS570
 

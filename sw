@@ -1,15 +1,3 @@
-
-%Architekturu ARM (Advanced RISC Machines, dříve Acorn RISC Machine) vyvinula firma ARM Holdings Ltd.
-%Ta se v současnosti zabývá pouze vývojem a prodává licence jiným firmám, které vyrábí hardware na architektuře ARM.
-%Jedná se o poměrně rozšířenou 32bitovou architekturu založenou na RISC filosofii.
-
-%Procesory ARM je dnes možné najít téměř ve všech oblastech spotřební elektroniky, jako jsou mobilní telefony, PDA, kalkulačky, herní konzole, routery, multimediální přehrávače, roboty a spousta dalších.
-%Mezi jejich hlavní přednosti patří poměrně velký výpočetní výkon, malá spotřeba a malá velikost kódu.
-%Těchto vlastností je s výhodou využíváno nejen ve vestavěných zařízeních.
-
-%Dalším charakteristickým rysem ARM procesorů je jejich Load/ Store architektura, která dovoluje provádět operace přímo mezi registry bez použití akumulátoru.
-%Při práci s daty v paměti je nejprve nutné tyto data přenést do registrů a teprve potom vykonat příslušnou operaci.
-
 \chap SW
 
 \sec ETHERNET
@@ -46,7 +34,7 @@ Fyzická vrstva je základní vrstvou referenčního modelu ISO/OSI. Fyzická vr
 
 logickou sběrnicí, po které jsou datové pakety přenášeny směrem ke všem účastníkům
 
-komunikace. Datové pakety jsou však určeny pouze těm, jejichž adresa je uvedena v adresovém poli přenášeného rámce. Fyzická vrstva definuje rozložení pinů, použité konektory, napěťové úrovně, vlastnosti a specifikace kabelů, elektrické vlastnosti přenosového média i jeho mechanické vlastnosti [3].
+komunikace. Datové pakety jsou však určeny pouze těm, jejichž adresa je uvedena v adresovém poli přenášeného rámce. Fyzická vrstva definuje rozložení pinů, použité konektory, napěťové úrovně, vlastnosti a specifikace kabelů, elektrické vlastnosti přenosového média i jeho mechanické vlastnosti.
 
 \secc Spojová vrstva
 
@@ -54,7 +42,7 @@ Jelikož síť je obecně využívána mnoha zařízeními od různých výrobc�
 
 Spojová vrstva zajišťuje přenos dat v rámci jedné lokální sítě právě pomocí fyzických adres zařízení. Jednotlivé bity přenášeného rámce se přenášejí po bitech po fyzickém médiu, samotnému přenosu informačních bitů pak předchází startovací posloupnost. Startovací posloupnost, označovaná také jako preambule (sekvence střídajících se jedniček a nul), slouží k synchronizaci vysílací stanice a všech přijímacích stanic. Datový rámec obsahuje adresu příjemce, odesílatele, typ zprávy, samotná data a kontrolní součet.
 
-Spojová vrstva dále definuje přístupovou metodu k přenosovému médiu (kabelu). Jelikož je přenosové médium sdíleno několika stanicemi, které mohou ve stejnou chvíli začít vysílat, je třeba definovat pravidla přístupu k tomuto přenosovému médiu. Nejznámější přístupovou metodou je CSMA/CD (Carrier Sense Multiple Access/Collision Detection). Každý z účastníků komunikace má v tomto případě stejné právo využít sdílené přenosové médium v jakémkoli okamžiku, kdy je médium nevyužito. Pokud se však dvě zařízení rozhodnou odeslat data ve stejný okamžik dojde ke kolizi. Pokud stanice detekují kolizi, vyšle signál JAM, kterým ohlásí i ostatním stanicím, že došlo ke kolizi a po náhodném čase vysílání opakuje, pokud je sdílené médium volné k použití. Modernější varianty ethernetu však od sdíleného média a tedy od přístupové metody CSMA/CD ustupují a využívají přepínače s plně duplexním režimem provozu [3].
+Spojová vrstva dále definuje přístupovou metodu k přenosovému médiu (kabelu). Jelikož je přenosové médium sdíleno několika stanicemi, které mohou ve stejnou chvíli začít vysílat, je třeba definovat pravidla přístupu k tomuto přenosovému médiu. Nejznámější přístupovou metodou je CSMA/CD (Carrier Sense Multiple Access/Collision Detection). Každý z účastníků komunikace má v tomto případě stejné právo využít sdílené přenosové médium v jakémkoli okamžiku, kdy je médium nevyužito. Pokud se však dvě zařízení rozhodnou odeslat data ve stejný okamžik dojde ke kolizi. Pokud stanice detekují kolizi, vyšle signál JAM, kterým ohlásí i ostatním stanicím, že došlo ke kolizi a po náhodném čase vysílání opakuje, pokud je sdílené médium volné k použití. Modernější varianty ethernetu však od sdíleného média a tedy od přístupové metody CSMA/CD ustupují a využívají přepínače s plně duplexním režimem provozu.
 
 \secc Síťová vrstva
 
