@@ -1,9 +1,13 @@
-\chap SW
+\label[SMAIN]
+\chap Popis programových částí práce
 
+\label[SRTEMS]
 \sec RTEMS
 
-\sec LWIP
+\label[SLWIP]
+\sec LwIP
 
+\label[SETH]
 \sec ETHERNET
 
 Protože je implementace Ethernetu jedním z požadavků, poskytuje následující kapitola alespoň stručnou teorii týkající se tohoto tématu.

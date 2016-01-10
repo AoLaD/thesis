@@ -1,5 +1,7 @@
-\chap Hardware
+\label[HMAIN]
+\chap Popis hardwarových částí práce
 
+\label[H21]
 \sec TMS570LS
 
 \secc Microkontroléry firmy Texas Instruments
@@ -63,6 +65,7 @@ Ten umožňuje centralizovanou volbu priorit, analýzu a signalizaci všech zji�
 
 %Více informací o obvodech TMS570 lze nalézt na adrese www.ti.com/tms570.
 
+\label[H23]
 \secc Časovač
 
 Periferie časovače RTI poskytuje operačnímu systém nástroj, jak měřit časová kvanta a podle nich provádět přepínání kontextu.
@@ -96,6 +99,7 @@ Vstup do každé z těchto čtyřech porovnávacích jednotek může být zvolen
 
 % XXX odkaz na referenční manual
 
+\label[H24]
 \secc Sériové porty
 
 Obsluha seriových portů v mikrokontroléru tms570 je možná ze dvou periferii.
@@ -128,6 +132,7 @@ Na obrázku \ref[sci] lze naleznout formát komunikace jednoho znaku.
 
 Znázorněný adresový bit je velmi důležitý při usnadnění komunikace více zařízení po sériové lince.
 
+\label[H25]
 \secc Řízení přerušení
 
 Kvůli snadnější obsluze přerušení byl firmou Texas Instruments do mikrokontroléru zakomponován modul řadiče vektorových přerušení (VIM).
@@ -140,16 +145,18 @@ Nejstarší přístup pracuje tak, jak by to bylo běžné v jádře CORTEX--R4.
 Řízení je předáno na adresu vektoru přerušení v tabulce výjimek jádra.
 Úkolem obslužné rutiny je přečíst registr IRQINDEX, kam modul VIM uložil index právě probíhajícího přerušení.
 Tento přístup je kompatibilní se staršími mikrokontroléry jako je TMS470.
+
 Trošku modernější přístup automaticky připraví vektor přerušení.
 Nicméně je potřeba tyto vektory vyplnit před zapnutím přerušení do paměti associované s modulem VIM.
 Jakmile modul VIM obdrží žádost o přerušení, připraví do registru IRQVECREG adresu rutiny přerušení, kterou si načetl z předem vyplněné tabulky.
 Obecná obslužná rutina přerušení, která se nachází v tabulce výjimek, může pouze provést skok na adresu vyplněnou modulem VIM.
-Třetí automatický přístup lze použít pouze pro obyčejná přerušení (IRQ) a ne pro přerušení s rychlou odezvou (FIQ).
 
+Třetí automatický přístup lze použít pouze pro obyčejná přerušení (IRQ) a ne pro přerušení s rychlou odezvou (FIQ).
 Postup přerušení je analogický k předchozímu přístupu s jedinou výjimkou.
 Modul VIM požádá jádro, aby neprovádělo skok na obvyklou adresu v tabulce výjimek, ale aby rovnou předalo řízení na adresu, kterou on jádru podstrčí.
 Tak se skočí na adresu, která odpovídá obsluze přerušení vyplněné při inicializaci.
 Tato funkcionalita se zapíná v jádře CORTEX--R4 pomocí bitu VE v konfiguračním registru.
+
 Poslední přístup předpokládá využití programem řízených přerušení.
 Aplikace se spoléhá pouze na sebe a funkcionalitu vektorů spravovaných modulem VIM odmítá.
 V takovémto případě se od aplikace očekává, že kromě zrušení žádosti o přerušení v dané periferii (časovač), zruší aplikace ještě žádost o přerušení v modulu VIM.
@@ -164,6 +171,7 @@ Těchto vlastností je s výhodou využíváno nejen ve vestavěných zařízen�
 Bohužel podrobnější informace o jádře CORTEX--R4 patří pod licenci firmy ARM Holdings Ltd a proto se teoretickému fungování jádra CORTEX--R4 tato práce nezabívá.
 %odkaz na referenční manual
 
+\label[HETH]
 \sec ETHERNET a PHY
 
 Adaptér pro ethernet / rychlý ethernet se v mikrokontrolérech rozděluje na dvě základní části a to na část MAC (Media Access Control), která řeší problémy na vyšší úrovni a je součástí mikrokontrolérů a na část PHY (Physical Layer Interface), která řeší fyzickou část připojení.
@@ -235,7 +243,7 @@ Redukovaná varianta MII (RMII) je na obrázku \ref[eth4].
 \caption/f EMac a MDIO Signály pro RMII Interface
 \medskip
 
-\sec MDIO modul
+\secc MDIO modul
 
 MDIO modul (Management data input output) umožňuje aplikaci získat přístup do až 32 registrů PHY zařízení pomocí dvouvodičové sběrnice (hodiny, data).
 MDIO rozhraní podporuje až 32 PHY zařízení.
@@ -280,6 +288,7 @@ DP83348 je modul PHY od společnosti Texas Instruments. Tento modul podporuje ob
 
 Standardní MII má sadu registrů od adresy 0h do adresy 7h
 
+\label[HKIT]
 \sec Vývojový kit TMS570
 
 Vývojový kit TMS570LS31 společnosti Texas Instrumens poskytuje hardwarovou platformu k ověření funkčnosti mikrokontrolérů rodiny TMS570LS a je určen zejména k usnadnění vývoje zákaznického hardware a software a tím snížení doby uvedení na zákaznický trh.
