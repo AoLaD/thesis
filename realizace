@@ -1,6 +1,6 @@
 \chap Úvod
 
-Tato diplomová práce si klade za cíl navrhnout, implementovat a začlenit podporu mikrokontroleru TMS570 od firmy Texas Instruments do operačního systému RTEMS.
+Tato diplomová práce si klade za cíl navrhnout, implementovat a začlenit podporu mikrokontroleru TMS570 od firmy Texas Instruments do operačního systému RTEMS. \cite[RTEMS]
 \medskip
 
 Do operačnímu systému je potřeba začlenit podporu obsluhy základních periferii.
@@ -62,7 +62,7 @@ Výsledky dosažené v této diplomové práci byly průběžně testovány (kap
 \chap Realizace
 
 \label[PHlav]
-\sec Příprava hlavičkových souborů
+\sec Příprava hlavičkových souborů 
 
 	Jedním z kritických problémů při zadání této diplomové práce byla nedostupnost hlavičkových souborů popisujících periferie mikrokontroleru a registry jádra.
 Jediné existující hlavičkové soubory byly pod licencí TI, která byla nekompatibilní s licencí operačního systému RTEMS.
@@ -208,7 +208,7 @@ Mezi další výhody JSON patří jednoduchost a zároveň velké možnosti uspo
 
 	Vstupem do první části jsou data vyextrahovaná z referenčního manuálu, například pomocí skriptů jazyka Autohotkey.
 Tato data již mají strukturu typu JSON avšak odpovídají spíše formátu referenčního manuálu než formátu vyžadovaného generovací částí.
-Příklad této triviální úpravy je přiložen mezi zdrojovými soubory. {\bf odkaz na github}
+Příklad této triviální úpravy je přiložen mezi zdrojovými soubory.
 
 Ukázka, pro porovnání proti vstupnímu formátu je uvedana níže.
 \begtt
@@ -247,7 +247,7 @@ Dále jsou zde znázorněny formáty souborů, což může velmi pomoci v orient
 \secc Hlavičkové soubory
 
 	Formát hlavičkových souborů, který nakonec schválila RTEMS komunita, obsahuje pro každou periferii jednu hlavní strukturu popisující všechny registry periferie.
-Posuny registrů jsou automaticky přepočítány a doplněny o rezervovaná místa.
+Posuny registrů jsou automaticky přepočítány a doplněny o rezervovaná místa. \cite[HLAVICKY]
 Dále pak obsahuje vnitřní popis všech bitových polí každého registru a příslušná makra pro jejich čtení a nastavování.
 Při použití těchto maker může programátor dosáhnout vyšší čitelnosti a přenositelnosti aplikačního kódu.
 Pro každý registr a bitové pole je zde krátký popisující text.
@@ -461,7 +461,7 @@ Nastavením registrů COMP0 a UDP0 docílíme periodického generování událos
 Registr COMP0 obsahuje číslo, při kterém čítač vygeneruje událost.
 Při vygenerování události se registr COMP0 automaticky zvýší o hodnotu registru UDP0.
 Jako poslední se nastaví povolení přerušení v registru SETINTENA.
-Čítač se spustí registrem GCTRL.
+Čítač se spustí registrem GCTRL. \cite[RTEMSCLOCK]
 
 \label[RPin]
 \secc    Pinmux
@@ -592,7 +592,7 @@ Současná verze již licenčně umožňuje sloučení s projektem RTEMS.
 Nicméně jsou tyto funkce celkově přepsané, aby odpovídaly novým definičním hlavičkovým souborům mikrokontroleru.
 
 Inicializace obsahuje možnost nastavení promiskuitního režimu, určení výchozího kanálu pro příjem všesměrových zpráv, povolení přerušení pro daný kanál, výběr mezi jednocestnou a oboucestnou komunikací a nakonec povolení přerušení na periferii EMAC.
-Po tomto nastavení je periferie EMAC připravena k použití a při vyplnění adresy prázdného a připraveného spojitého seznamu do registru RX\_HDP začne periferie EMAC zapisovat přijatá data.
+Po tomto nastavení je periferie EMAC připravena k použití a při vyplnění adresy prázdného a připraveného spojového seznamu do registru RX\_HDP začne periferie EMAC zapisovat přijatá data.
 
 \label[R63]
 \secc Přizpůsobení LwIP knihovně
@@ -732,7 +732,7 @@ Kromě základního časovače a sériového komunikačního rozhraní, které b
 Detailní postup vkládání podpory zmíněných periferii do operačního systému RTEMS je v práci zdokumentován a může sloužit jako návod při vytváření podpory pro jiný mikrokontrolér.
 
 Začlenění podpory mikrokontroléru TMS570 do vývojového stromu RTEMS proběhlo úspěšně.
-{\bf Začlenění proběhlo až po několika kolech schvalování, kdy se několik vývojářů vyjadřovalo a diskutovalo o kvalitě a úpravě kódu, bezpečnosti implementace a celkové integrity s projektem RTEMS }.
+Začlenění proběhlo až po několika kolech schvalování, kdy se několik vývojářů vyjadřovalo a diskutovalo o kvalitě a úpravě kódu, bezpečnosti implementace a celkové integrity s projektem RTEMS.
 
 Po několika dalších komunitních rozhovorech byl navrhnut příklad preferovaného hlavičkového souboru.
 Do hlavní vývojové větve se tímto dostaly hlavičkové soubory popisující ostatní periferie mikrokontroléru TMS570 v příslušném dohodnutém formátu.

@@ -1,0 +1,54 @@
+﻿\begin{thebibliography}{10}
+
+\bibitem{LWIPWIKI}
+\newblock lwIP Wiki,leden 2016.
+\newblock \url{http://lwip.wikia.com/wiki/LwIP_Wiki/ }.
+
+\bibitem{RTEMS}
+\newblock RTEMS Real Time Operating Systém RTOS, leden 2016.
+\newblock \url{https://www.rtems.org/ }.
+
+\bibitem{MOTOR}
+Gerhard Wenderlein.
+\newblock Mikrokontroléry pro pohon hybridních a elektrických automobilů ,červen 2013.
+\newblock \url{http://pandatron.cz/?1722&mikrokontrolery_pro_pohon_hybridnich_a_elektrickych_automobilu/ }.
+
+
+\bibitem{HLAVICKY}
+RTEMS.
+\newblock Hlavičkové soubory mikrokontrolétů TMS570,listopad 2015.
+\newblock \url{ https://github.com/RTEMS/rtems/tree/master/c/src/lib/libbsp/arm/tms570/include/ti_herc/ }.
+
+\bibitem{REFMAN}
+Texas Instruments.
+\newblock TMS570LS31x/21x 16/32-Bit RISC Flash Microcontroller
+Technical Reference Manual ,leden 2013.
+\newblock \url{ http://www.ti.com/lit/ug/spnu499b/spnu499b.pdf/ }.
+
+\bibitem{TMS570P}
+Texas Instruments.
+\newblock Overview for Hercules TMS570 MCUs ,leden 2016.
+\newblock \url{ http://www.ti.com/lsds/ti/microcontrollers_16-bit_32-bit/c2000_performance/safety/tms570/overview.page/ }.
+
+\bibitem{TMS570HDK}
+Texas Instruments.
+\newblock TMS570LS31x HDK Kit, leden 2016
+\newblock \url{ http://processors.wiki.ti.com/index.php/TMS570LS31x_HDK_Kit }.
+
+\bibitem{RTEMSCLOCK}
+\newblock lwIP Wiki,leden 2016.
+\newblock \url{https://github.com/RTEMS/rtems/tree/master/c/src/lib/libbsp/arm/tms570/clock/ }.
+
+\bibitem{ARM}
+ARM Ltd.
+\newblock Cortex-R4 Processor, leden 2016.
+\newblock \url{http://www.arm.com/products/processors/cortex-r/cortex-r4.php }.
+
+
+
+\end{thebibliography}
+
+
+
+
+

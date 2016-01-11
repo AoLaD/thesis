@@ -29,7 +29,7 @@ Výsledky jsou ukládány pro každý modul samostatně a to v předem stanoven�
 
 Pro koordinaci systému a pro připojení k nadřazeným obvodům systému je často integrována sběrnice typu FlexRay.
 Pro modul FlexRay je důležité, aby podporoval čtení dat bez interakce CPU, podobně jako pracuje DMA, o což se stará jednotka FlexRay Transfer Unit (FTU).
-Kromě zmíněného umožňuje připojení k SPI či LIN/SCI modulu.
+Kromě zmíněného umožňuje připojení k SPI či LIN/SCI modulu. \cite[MOTOR]
 
 \secc Bezpečnost mikrokontroléru
 
@@ -60,7 +60,7 @@ Pro otestování staticky uložených dat je k dispozici 64-bit CRC jednotka, um
 Většina periferních modulů je vybavena schopností detekce základních typů chyb, jako je například vnitřní test analogově-digitálního převodníku.
 
 Všechny uvedené hlavní moduly, určené pro detekci chyb, jsou spojeny s modulem signalizace poruchových stavů.
-Ten umožňuje centralizovanou volbu priorit, analýzu a signalizaci všech zjištěných chyb dalším obvodům.
+Ten umožňuje centralizovanou volbu priorit, analýzu a signalizaci všech zjištěných chyb dalším obvodům. \cite[TMS570P]
 
 %Více informací o obvodech TMS570 lze nalézt na adrese www.ti.com/tms570.
 
@@ -82,9 +82,9 @@ Tento modul je navržen tak, aby odpovídal požadavkům normy automobilového p
 Obrázek \ref[timer] ukazuje základní blokový diagram RTI periferie.
 
 \medskip
-\clabel[timer]{prvni superduper obrazek}
+\clabel[timer]{Blokový diagram RTI periferie}
 \picw=13cm \cinspic img/timer.jpg
-\caption/f prvni superduper obrazek. Obrázek vyfotil!
+\caption/f Blokový diagram RTI periferie
 \medskip
 
 Z obrázku je vidět, že periferie obsahuje dva nezávislé čítače pro generování rozdílných časových základen.
@@ -125,9 +125,9 @@ Při dokončení přenosu budou data v registru SCIRD.
 Na obrázku \ref[sci] lze naleznout formát komunikace jednoho znaku.
 
 \medskip
-\clabel[sci]{prvni superduper obrazek}
+\clabel[sci]{Komunikace po sběrnici UART}
 \picw=13cm \cinspic img/sci.jpg
-\caption/f prvni superduper obrazek. Obrázek vyfotil!
+\caption/f Komunikace po sběrnici UART
 \medskip
 
 Znázorněný adresový bit je velmi důležitý při usnadnění komunikace více zařízení po sériové lince.
@@ -168,8 +168,7 @@ Procesory ARM je dnes možné najít téměř ve všech oblastech spotřební el
 Mezi jejich hlavní přednosti patří poměrně velký výpočetní výkon, malá spotřeba a malá velikost kódu.
 Těchto vlastností je s výhodou využíváno nejen ve vestavěných zařízeních.
 
-Bohužel podrobnější informace o jádře CORTEX--R4 patří pod licenci firmy ARM Holdings Ltd a proto se teoretickému fungování jádra CORTEX--R4 tato práce nezabívá.
-%odkaz na referenční manual
+Bohužel podrobnější informace o jádře CORTEX--R4 patří pod licenci firmy ARM Holdings Ltd a proto se teoretickému fungování jádra CORTEX--R4 tato práce nezabívá. \cite[ARM]
 
 \label[HETH]
 \sec ETHERNET a PHY
@@ -179,7 +178,7 @@ Adaptér pro ethernet nebo rychlý ethernet se ve vestavěných systémech rozd�
 Propojení MAC s PHY je provedeno přes synchronní paralelní rozhraní, jak je uvedeno na obrázku \ref[eth1].
 
 \medskip
-\clabel[eth1]{prvni superduper obrazek}
+\clabel[eth1]{Schéma zapojení adaptéru pro Ethernet}
 \picw=13cm \cinspic img/eth1.jpg
 \caption/f Schéma zapojení adaptéru pro Ethernet
 \medskip
@@ -203,9 +202,9 @@ U mikrokontroléru TMS570LS3137 je MAC řešen třemi základními moduly a to k
 Jak je patrno z obrázku \ref[eth2], je řídící modul hlavním rozhraním mezi EMAC modulem, který poskytuje rozhraní mezi jádrem mikrokontroléru, sítí a MDIO modulem, který zajišťuje řízení PHY.
 
 \medskip
-\clabel[eth2]{prvni superduper obrazek}
+\clabel[eth2]{moduly MAC}
 \picw=13cm \cinspic img/eth2.jpg
-\caption/f MAC moduly
+\caption/f moduly MAC 
 \medskip
 
 Součástí kontrolního modulu je řízení přerušení a 8KB integrovaná vyrovnávací paměť rezervovaná pro popisovače (descriptors), která je mapovaná do adresního prostoru.
@@ -218,9 +217,9 @@ Obrázek \ref[eth3] zobrazuje vlastní připojení EMAC modulu a MDIO modulu s P
 Detailní popis jednotlivých signálů je uveden v [X - SPNU499B–November 2012–Revised August 2013]
 
 \medskip
-\clabel[eth3]{prvni superduper obrazek}
+\clabel[eth3]{EMAC a MDIO Signály pro MII Interface}
 \picw=13cm \cinspic img/eth3.jpg
-\caption/f EMac a MDIO Signály pro MII Interface
+\caption/f EMAC a MDIO Signály pro MII Interface
 \medskip
 
 MII\_TXCLK jsou kontinuální hodiny, které poskytují referenční časování pro Tx přenos.
@@ -239,9 +238,9 @@ Tyto signály mají význam jen v half-duplex režimu.
 Redukovaná varianta MII (RMII) je na obrázku \ref[eth4].
 
 \medskip
-\clabel[eth4]{prvni superduper obrazek}
+\clabel[eth4]{EMAC a MDIO Signály pro RMII Interface}
 \picw=13cm \cinspic img/eth4.jpg
-\caption/f EMac a MDIO Signály pro RMII Interface
+\caption/f EMAC a MDIO Signály pro RMII Interface
 \medskip
 
 \secc MDIO modul
@@ -256,7 +255,7 @@ MDIO\_D signál je oboustranný a umožňuje jak čtení, tak zápis.
 Na obrázku \ref[eth5] je zobrazena datová struktura zprávy (frame).
 
 \medskip
-\clabel[eth5]{prvni superduper obrazek}
+\clabel[eth5]{Struktura MDIO zprávy}
 \picw=13cm \cinspic img/eth5.jpg
 \caption/f Struktura MDIO zprávy
 \medskip
@@ -272,13 +271,13 @@ Pro transakci zápisu MAC zařízení nastavuje TA bity na hodnotu „10“ a PH
 Na obrázku číslo \ref[eth6] a \ref[eth7] jsou zobrazeny časové průběhy přenášených dat při transakci zápisu (\ref[eth6]) a při transakci čtení (\ref[eth7]).
 
 \medskip
-\clabel[eth6]{prvni superduper obrazek}
+\clabel[eth6]{MDIO časování – transakce zápis}
 \picw=13cm \cinspic img/eth6.jpg
 \caption/f MDIO časování – transakce zápis
 \medskip
 
 \medskip
-\clabel[eth7]{prvni superduper obrazek}
+\clabel[eth7]{MDIO časování – transakce čtení}
 \picw=13cm \cinspic img/eth7.jpg
 \caption/f MDIO časování – transakce čtení
 \medskip
@@ -296,18 +295,18 @@ Vývojový kit TMS570LS31 společnosti Texas Instrumens poskytuje hardwarovou pl
 
 \secc  Popis kitu
 
-Podrobné informace k vývojovému kitu společnosti Texas Instrumens jsou dostupné v X a v X, včetně elektrického schématu nebo výrobních podkladů k plošnému spoji.
+Podrobné informace k vývojovému kitu společnosti Texas Instrumens včetně elektrického schématu nebo výrobních podkladů k plošnému spoji jsou na jejich internetových stránkách. \cite[TMS570HDK]
 
 Vývojový kit je založen na mikrokontroléru TMS570LS31.
 Na obrázku \ref[eth11] je blokové schéma vývojového kitu. 
 
 \medskip
-\clabel[eth11]{prvni superduper obrazek}
+\clabel[eth11]{Blokové schéma vývojového kitu TMS570LS31 HDK}
 \picw=13cm \cinspic img/eth11.jpg
 \caption/f Blokové schéma vývojového kitu TMS570LS31 HDK
 \medskip
 
 Vývojový kit je osazen mikrokontrolérem Hercules TMS570LS3137 v BGA pouzdře se 337 piny. Dále je zde 10/100Mbit síťové rozhraní s PHY DP83640, externí JTAG konektor, UART, 8MB SDRAM, slot pro SD kartu přes SPI sběrnici, napájení od +5V do +12V @ 130mA.
-Podrobnější specifikace je uvedena v X. 
+
 
 
