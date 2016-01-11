@@ -56,9 +56,6 @@ Integrace síťového rozhraní je rozdělena do tří stejně důležitých č�
 
 Výsledky dosažené v této diplomové práci byly průběžně testovány \ref[RTest] a ačkoliv se při testování objevilo mnoho záludných problémů, vedou k jednoznačně pozitivnímu závěru \ref[RZáv]. 
 
-
-
-
 \input hw
 
 \input sw
@@ -135,6 +132,7 @@ Script využívá jazyka Autohotkey a běží v operačním systému.
 Pracuje jako stavový automat a po stisku příslušného tlačítka provede nad referenčním manuálem serii krátkých operací.
 Pomocí schránky vykopíruje data z referenčního manuálu, doplní je o požadované náležitosti a zapíše na disk.
 Takto zpracovaná data mají vždy stejný a snadno nastavitelný formát, což z nich dělá ideální vstup do dalšího programu generujícího hlavičkové soubory.
+
 Výhodou tohoto přístupu je použití snadno modifikovatelných skriptů, které zajišťují velkou adaptabilitu na jiné styly textu či jiné referenční manuály.
 Celkový čas extrakce dat z největších periferií mikrokontroléru TMS570 se pohybuje okolo jedné hodiny.
 Nevýhodou je, že se stále jedná o ruční práci, takže se může objevit chyba.
@@ -142,9 +140,45 @@ Výsledná vygenerovaná data je tedy nutno překontrolovat.
 
 Tato metoda byla použita pro její nejlepší poměr mezi časem stráveným extrakcí dat z referenčního manuálu, korektností vyextrahovaných dat a dobou potřebnou k vývoji metody.
 
+Ukázka vystupního formátu je uvedana níže.
+\begtt
+      "name" : "CRC",
+      "full name" : "Cyclic Redundancy Check",
+      "offset" : ["0xFE000000"],
+      "registers" : [{
+          "name" : "CTRL0",
+          "info" : "CRC Global Control Register",
+          "lenght" : "32",
+          "adress" : "0",
+          "offset" : "0",
+          "fields" : [ {
+               "bit_number" : "8",
+               "bit_Field_Name" : "CH2_PSA_SWREST",
+               "info" : "Channel 2 PSA Software Reset.
+             },
+             
+\endtt
+
 \secc Budoucí rozšíření
 
-	{\bf Naposledy zmíněný postup je snadno replikovatelný a použitelný v praxi. Avšak pro případy potřeby extrahovat data k vícero mikrokontrolérům byl navržen ještě jeden komfortnější přístup.  }%TO BE CON
+Naposledy zmíněný postup je snadno replikovatelný a použitelný v praxi.
+Avšak pro případy potřeby extrahovat data k vícero mikrokontrolérům byl navržen ještě jeden komfortnější přístup.
+Základní myšlenka vychází z faktu, že pro moderní počítače není problém zpracovat i větší obrázky v téměř okamžitém čase.
+Komfortní postup extrahování dat by mohl být následující:
+
+\begitems
+* naučit program rozpoznávat znaky z pdf. Ideální varianta je statické učení pomocí textového modulu.
+* označit umístění pdf na monitoru
+* listovat pdf souborem a ukazovat tabulky, které je potřeba vyextrahovat
+\enditems
+
+Tento postup je oproti klasickému rozpoznávání textu pomalejší, ale stále je natolik rychlý, aby uživatel nepoznal zpoždění.
+Oproti klasickému rozpoznávání textu je těžší naučit se nový font. Naproti tomu tento algoritmus převádí s naprostou přesností.
+Tento způsob je vyrazně jednoduší naimplementovat.
+
+Zbývá jen rozhodnout jakým způsobem bude algoritmus pracovat s vyextrahovanými daty.
+Základním řešením je exportovat data do souboru ve formátu tabulky oddělené středníkem.
+Pokročilým řešením by bylo přidání abstrakční vrstvy sloužící ke zpracovávání dat.
 
 \label[GHlav]
 \sec Generování hlavičkových souborů
@@ -174,10 +208,39 @@ Mezi další výhody JSON patří jednoduchost a zároveň velké možnosti uspo
 Tato data již mají strukturu typu JSON avšak odpovídají spíše formátu referenčního manuálu než formátu vyžadovaného generovací částí.
 Příklad této triviální úpravy je přiložen mezi zdrojovými soubory. {\bf odkaz na github}
 
+Ukázka, pro porovnání proti vstupnímu formátu je uvedana níže.
+\begtt
+	 "name" : "CRC",
+     "full name" : "Cyclic Redundancy Check",
+     "offset" : ["0xFE000000"],
+     "registers" : [ {
+       "name" : "CTRL0",
+       "info" : "CRC Global Control Register",
+       "lenght" : "32",
+       "adress" : "0x0",
+       "fields" : [ {
+         "start_bit" : "8",
+         "bit_lenght" : "1",
+         "bit_Field_Name" : "CH2_PSA_SWREST",
+         "info" : "Channel 2 PSA Software Reset."
+         },             
+\endtt
+
 \secc Druhá část generátoru - generace
 
 	Standardní formát vstupu do této části nedělá generaci složitou.
 Program byl navržen tak, aby bylo možno jednoduše měnit a opravovat výstupní formát hlavičkových souborů až do momentu, kdy RTEMS komunita pozitivně odpoví na možné začlenění do projektu.
+
+Obrázek \ref[hlavicky1] ukazuje celý postup generování hlavičkových souborů, při zachování stávajícího přístupu.
+
+\medskip
+\clabel[hlavicky1]{prvni superduper obrazek}
+\picw=13cm \cinspic img/postup.jpg
+\caption/f Sekvence generování hlavičkových souborů
+\medskip
+
+Z obrázku by mělo být vidět, že narozdíl od skriptu autohotkey se proces standardizace mezi různými mikrokontroléry nemusí téměř měnit.
+Dále jsou zde znázorněny formáty souborů, což může velmi pomoci v orientaci mezi přiloženými soubory.
 
 \secc Hlavičkové soubory
 
@@ -188,7 +251,53 @@ Při použití těchto maker může programátor dosáhnout vyšší čitelnosti
 Pro každý registr a bitové pole je zde krátký popisující text.
 Možné fyzické hodnoty bitového pole se do hlaviček prozatím nedostaly.
 
-{\bf obrázek a něco}
+Níže je uveda ukázka struktury periferie hlavičkového souboru.
+Tato struktura je velmi podobná té, kterou přikládají výrobci mikrokontrolérů ke svým výrobkům.
+
+\begtt
+typedef struct{
+  uint32_t CTRL0;             /*CRC Global Control Register*/
+  uint8_t reserved1 [4];
+  uint32_t CTRL1;             /*CRC Global Control Register 1*/
+  uint8_t reserved2 [4];
+  uint32_t CTRL2;             /*CRC Global Control Register 2*/
+  ...
+  uint32_t RAW_DATAREGH2;     /*Channel 2 Raw Data High Register*/
+  uint8_t reserved11 [128];
+  uint32_t BUS_SEL;           /*Data Bus Selection Register*/
+} tms570_crc_t;
+\endtt
+
+Příklad smysluplného popisu vnitřníh polí registrů, který v hlavičkových souborech firmy Texas Instruments chybí, je přiložen níže.
+
+\begtt
+/*----------------------TMS570_CRC_CTRL2----------------------*/
+/* field: CH2_MODE - Channel 2 Mode Selection */
+#define CRC_CTRL2_CH2_MODE(val) BSP_FLD32(val,8, 9)
+#define CRC_CTRL2_CH2_MODE_GET(reg) BSP_FLD32GET(reg,8, 9)
+#define CRC_CTRL2_CH2_MODE_SET(reg,val) BSP_FLD32SET(reg, val,8, 9)
+
+/* field: CH1_TRACEEN - Channel 1 Data Trace Enable.
+ * When set, the channel is put into data trace mode. */
+#define CRC_CTRL2_CH1_TRACEEN BSP_BIT32(4)
+
+/* field: CH1_MODE - Channel 1 Mode Selection */
+#define CRC_CTRL2_CH1_MODE(val) BSP_FLD32(val,0, 1)
+#define CRC_CTRL2_CH1_MODE_GET(reg) BSP_FLD32GET(reg,0, 1)
+#define CRC_CTRL2_CH1_MODE_SET(reg,val) BSP_FLD32SET(reg, val,0, 1)
+\endtt
+
+Makra typu BSP\_FLD32 jsou definována přímo v projektu RTEMS.
+Makro BSP\_FLD32 v prvním případě umístí hodnotu val na osmý a devátý bit dvaatřiceti bitového čísla.
+Hlavní výhoda těchto maker tkví ve zjednodušení pro vývojáře.
+Vyvojář si nemusí hledat, že se jedná o 8 a 9 bit.
+Ani nemusí hledat a ve svém kódu udržovat nepřehledné konstanty nebo definice.
+
+Příklad pro vyčtení módu druhého kanálu v periferii CRC může vypadat například takto:
+
+\begtt
+CRC_CTRL2_CH2_MODE_GET(TMS570_CRC->CTRL2)
+\endtt
 
 \label[Start]
 \sec Start operačního systému
@@ -196,7 +305,7 @@ Možné fyzické hodnoty bitového pole se do hlaviček prozatím nedostaly.
 	Tato sekce je zaměřena na efektivní start operačního systému RTEMS.
 \medskip
 
-	Předání řízení opearčnímu systému RTEMS je realizováno skokem na symbol XXX.
+	Předání řízení opearčnímu systému RTEMS je realizováno skokem na symbol \_ARMV4\_Exception\_interrupt.
 Tento skok nemůže být proveden hned po startu mikrokontroléru, protože je potřeba mikrokontrolér připravit na běh aplikace a tato funkcionalita v operačním systému RTEMS není obsažena.
 Jedná se například o zkontrolování integrity paměti ale i o možné předpřipravení periferii.
 O paměťový prostor mikrokontroléru se tedy většinou dělí dva nezávislé programy.
@@ -216,10 +325,11 @@ Používat druhou tabulku výjimek na adrese 0xFFFF0000 je bohužel v mikrokontr
 Toto je velmi důležité, protože operační systém RTEMS dokáže zpracovat všechny výjimky z tabulky výjimek a je vhodné, aby to také prováděl.
 Avšak protože je nutné kód zavaděče vykonat jako první, nachází se zavaděč pravděpodobně v prostorech okolo tabulky výjimek a tabulka výjimek odkazuje na zavaděč.
 
-	Měnit obsah tabulky výjimek je značně komplikované a to z toho důvodu, že se tabulka nachází v paměti typu flash. Počet zápisů do paměti typu flash je omezen.
+Měnit obsah tabulky výjimek je značně komplikované, protože se tabulka nachází v paměti typu flash.
+Počet zápisů do paměti typu flash je omezen.
 Jednoduchým řešením tohoto problému je rozšířit zavaděč tak, aby skoky z tabulky výjimek přeposílal do aplikace.
 Nevýhodou tohoto řešení je i několika skokové zpoždění reakční doby na přerušení nebo jinou výjimku.
-Na mikrokontroléru TMS570 jde tento problém vyřešit pomocí periferie POM, která může tabulku výjimek překrýt virtuální stránkou paměti a tím tabulku přesměrovat bez nutnosti přepisovat flash paměť. 
+Na mikrokontroléru TMS570 se může tento problém vyřešit pomocí periferie POM, která může tabulku výjimek překrýt virtuální stránkou paměti a tím tabulku přesměrovat bez nutnosti přepisovat flash paměť. 
 	 
 \label[RRTEMS]
 \sec Návrh a začlenění TMS570 do RTEMS
@@ -234,7 +344,8 @@ Tato diplomová práce se zabívá přidáním podpory a tedy podpůrných kód�
 Jádro mikrokontroléru ARM již bylo projektem RTEMS podporováno a složka pro BSP založené na arm jádře je umístěna v rtems/c/src/lib/libbsp/arm.
 Pokud by byla potřeba přidat úplně nová architektura, musela by se vytvořit příslušná složka v rtems/c/src/lib/libbsp ale hlavně i v rtems/c/src/lib/libcpu.
 Složka libcpu obsahuje definice a podporu různých modelů jader mikrokontrolérů. Jako typický příklad lze uvést obsluhu paměti CACHE nebo způsob přímého přístupu do paměti (DMA).
-Obojí je charakteristické právě pro jádro mikrokontroléru a tímto způsobem mohou dva mikrokontroléry od konkurenčních firem se stejným jádrem sdílet stejný kód.
+Obojí je charakteristické právě pro jádro mikrokontroléru.
+Tímto způsobem mohou dva mikrokontroléry se stejným jádrem sdílet stejný kód, přestože pocházejí od od konkurenčních výrobců.
 
 Pro založení nového BSP je typicky nejvhodnější použít existující, dobře držované BSP a to zkopírovat.
 Odpovědností vývojáře je postupně upravovat soubr README, do které patří informace o aktuálním stavu BSP.
@@ -244,7 +355,7 @@ V souboru configure.ac je možnost nastavit programové definice, které jsou po
 Pro správné fungování operačního systému je zde potřeba nastavit například minimální velikost vlákna nebo hodinovou frekvenci mikrokontrolérů.
 Jak je vidět, všechny informace v této složce budou silně platformově závislé.
 
-Pokyny jak zkompilovat právě vytvářené BSP obsahuje soubor Makefile.am. Zde je nutné nezapomenout na přidání skriptu pro linker pomocí:
+Pokyny, jak zkompilovat právě vytvářené BSP, obsahuje soubor Makefile.am. Zde je nutné nezapomenout na přidání skriptu pro linker pomocí:
 
 \begtt
 
@@ -252,7 +363,7 @@ EXTRA_DIST += startup/linkcmds.tms570ls3137_hdk_sdram
 
 \endtt
 
-Zbylá organizace složky už je na uvážení vývojáře.
+Zbylá organizace složky už záleží na uvážení vývojáře.
 V této práci bylo dbáno, aby byla rozdělena do složek podle logické funkcionality s jednou společnou složkou pro hlavičkové soubory.
 Cestu ke každému zdrojovému a hlavičkovému souboru je potřeba popsat v Makefile.am.
 
@@ -285,12 +396,25 @@ V tomto případě se jedná o periferii SCI a periferii LIN, která taktéž do
 Registrace se provádí funcí rtems\_termios\_device\_install.
 Funkce má dva důležité vstupy.
 Odkaz na strukturu registrovaného portu, kterou bude operační systém předávat dále a tabulku funkcí, které operační systém bude volat.
-Tyto funkce je potřeba implementovat.
-Jedná se především o funkce inicializace a deinicializace při prvním respektive posledním použití, čtení znaku, poslání znaku a nastavení parametrů přenosu.
-Pro potřeby této diplomové práce byly tyto funkce ještě rozvětveny na případy, kdy se pro tok dat využívá přerušení a kdy ne.
+Jaký může mít tabulka charakter je zobrazeno níže.
+
+\begtt
+const rtems_termios_device_handler tms570_sci_handler_interrupt  = {
+  .first_open = tms570_sci_interrupt_first_open,
+  .last_close = tms570_sci_interrupt_last_close,
+  .poll_read = NULL,
+  .write = tms570_sci_interrupt_write,
+  .set_attributes = tms570_sci_set_attributes,
+  .mode = TERMIOS_IRQ_DRIVEN
+};
+\\endtt
+
+Důležitý parametr je mode, který udává zda má operační systém pracovat s konzolí, jako se řízenou přerušením nebo nikoliv.
+Pro potřeby této diplomové práce byly tyto struktury vyplněny oběma způsoby a uživatel si může způsob řízení konzole vybrat v konfiguračním souboru.
+Dalšími parametry jsou především funkce inicializace a deinicializace při prvním respektive posledním použití, čtení znaku, poslání znaku a nastavení parametrů přenosu.
 
 Funkce nastavení parametrů obsahuje pouze práci s registry popsanými výše.
-Parametry pro nastavení portu do funkce předává operační systém pomocí struktury termios.
+Parametry pro nastavení portu do funkce Spředává operační systém pomocí struktury termios.
 Během vykonávání funkce je vhodné port zamknout pomocí rtems\_termios\_device\_lock\_acquire.
 
 Funkce pro otevření a zavření portu jsou zodpovědné za nastavení přerušení v periferii SCI a za registrování přerušení v operačním systému RTEMS.
@@ -301,6 +425,11 @@ Funkce printk by neměla používat přerušení, protože může být potřeba 
 Mezi další použití funkce printk patří ladění uvnitř přerušení nebo v kritickém stavu operačního jádra.
 Podpora funkce printk je přidána do druhého souboru a oddělena od ovladače sériových portů.
 Do jádra systému RTEMS se vkládá pomocí definice BSP\_output\_char.
+
+\begtt
+BSP_output_char_function_type BSP_output_char = tms570_uart_output;
+BSP_polling_getchar_function_type BSP_poll_char = tms570_uart_input;
+\endtt
 
 \label[RCas]
 \secc        Časovač

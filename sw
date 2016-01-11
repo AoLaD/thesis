@@ -4,8 +4,16 @@
 \label[SRTEMS]
 \sec RTEMS
 
+The Real-Time Executive for Multiprocessor Systems or RTEMS is an open source Real Time Operating System (RTOS) that supports open standard application programming interfaces (API) such as POSIX. It is used in space flight, medical, networking and many more embedded devices using processor architectures including ARM, PowerPC, Intel, Blackfin, MIPS, Microblaze and more. Commercial support is available from US and European companies, and free support comes via the active global community. Major decisions about RTEMS are made by the core developers in concert with the user community, guided by the Mission Statement. We provide access to our development sources via a Git Repository (see these Instructions for details). We strive to provide regular, high quality releases, which we want to work well on a wide range of embedded targets using cross development from a variety of hosts including GNU/Linux distributions, MS Windows, BSDs, Solaris, and Mac OS. We encourage everyone to contribute changes and feedback to RTEMS.
+
 \label[SLWIP]
 \sec LwIP
+
+Knihovna LwIP poskytuje implementaci protokulu TCP/IP vhodnou pro aplikace s omezeným množstvím paměti.
+
+Knihovna LwIP je dostupná pod BSD licencí a je vhodná do aplikací využívajících jazyk C. Cílem projektu bylo poskytnout plnou podporu TCP/IP při co nejmenším využítí operační paměti. Knihovna je vhodná pro mikrokontroléry s více jak deseti kilobyty operační paměti a čtyřicetikilobyty paměti programu.
+
+Knihovna LwIP je schopna funkce na různých operačních systémech pro mikrokontroléry. Stejně tak byla přizpůsobena rozličným hardwarovým platformám.
 
 \label[SETH]
 \sec ETHERNET
