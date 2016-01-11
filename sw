@@ -44,13 +44,13 @@ Jelikož samotný referenční model je velmi rozsáhlý a vydal by za sepsání
 
 Referenční model ISO/OSI definuje následující vrstvy:
 
-fyzická vrstva, spojová vrstva, síťová vrstva, transportní vrstva, relační vrstva, prezentační vrstva, aplikační vrstva
+fyzická vrstva, linková vrstva, síťová vrstva, transportní vrstva, relační vrstva, prezentační vrstva, aplikační vrstva
 
 Díky rozdělení ethernetu do jednotlivých vrstev je možné stanovit podmínky, za kterých je možné spolehlivě komunikovat mezi sebou po sériové sběrnici.
 Model je tvořen sedmi vrstvami, z nichž každá plní svoji předem definovanou funkci a službu.
 V referenčním modelu je vysvětleno jak se zpracovává odesílaná a přijímaná zpráva postupně po vrstvách od odesílatele až k příjemci.
 K samotnému přenosu informace dochází přes fyzický spoj.
-Účastníci komunikace, kteří spolu komunikují na aplikační vrstvě nemají žádné informace o funkci nižších vrstev.
+Účastníci komunikace, kteří spolu komunikují na aplikační vrstvě běžně nepotřebují a nedostávají žádné informace o funkci nižších vrstev.
 Každá z vrstev má definována pravidla, která řídí komunikaci mezi účastníky (zahájení, provedení, ukončení přenosu).
 
 Vazba každé vrstvy je omezena na jednu nižší vrstvu a jednu vyšší vrstvu (pokud existují).
@@ -62,9 +62,7 @@ To lze chápat jako soubor pravidel pro komunikaci.
 Fyzická vrstva je základní vrstvou referenčního modelu ISO/OSI.
 Fyzická vrstva je tvořena
 
-logickou sběrnicí, po které jsou datové pakety přenášeny směrem ke všem účastníkům
-
-komunikace.
+logickou sběrnicí, po které jsou datové pakety přenášeny směrem ke všem účastníkům komunikace.
 Datové pakety jsou však určeny pouze těm, jejichž adresa je uvedena v adresovém poli přenášeného rámce.
 Fyzická vrstva definuje rozložení pinů, použité konektory, napěťové úrovně, vlastnosti a specifikace kabelů, elektrické vlastnosti přenosového média i jeho mechanické vlastnosti.
 
@@ -73,11 +71,10 @@ Fyzická vrstva definuje rozložení pinů, použité konektory, napěťové úr
 Jelikož síť je obecně využívána mnoha zařízeními od různých výrobců, je každé ethernetové rozhraní těchto zařízení označeno unikátní adresou nazývanou MAC (z anglického „Media Access Control“), často označovanou také jako fyzická adresa.
 MAC adresa je přiřazována síťové kartě bezprostředně při její výrobě.
 Ethernetová MAC adresa se skládá z 48bitů převážně zapisovaných ve formátu hexadecimálních čísel 00-00-00-00-00-ab.
-Důležité je, aby MAC adresa byla celosvětově jedinečná.
 První polovinu MAC adresy přiřazuje centrální správce adresního prostoru, druhou polovinu MAC adresy zajišťuje přímo výrobce.
 
 Spojová vrstva zajišťuje přenos dat v rámci jedné lokální sítě právě pomocí fyzických adres zařízení.
-Jednotlivé bity přenášeného rámce se přenášejí po bitech po fyzickém médiu, samotnému přenosu informačních bitů pak předchází startovací posloupnost.
+Jednotlivé bity přenášeného rámce se přenášejí po fyzickém médiu, samotnému přenosu informačních bitů pak předchází startovací posloupnost.
 Startovací posloupnost, označovaná také jako preambule (sekvence střídajících se jedniček a nul), slouží k synchronizaci vysílací stanice a všech přijímacích stanic.
 Datový rámec obsahuje adresu příjemce, odesílatele, typ zprávy, samotná data a kontrolní součet.
 
@@ -91,10 +88,8 @@ Modernější varianty ethernetu však od sdíleného média a tedy od přístup
 
 \secc Síťová vrstva
 
-Úkolem síťové vrstvy (network layer) je zajistit především síťovou adresaci, směrování a předávání
-
-Dat (datagramů).
-Síťová vrstva je pak schopna přenášet data v jedné síti nebo mezi vícero sítěmi i technologicky rozdílných.
+Úkolem síťové vrstvy (network layer) je zajistit především síťovou adresaci, směrování a předávání dat (datagramů).
+Síťová vrstva je pak schopna přenášet data v jedné síti nebo mezi vícero sítěmi i technologicky rozdílnými.
 
 Předávání dat mezi jednotlivými sítěmi je obstaráno systémem bran a směrovačů.
 Na síťové vrstvě pracuje množství protokolů.
@@ -105,12 +100,8 @@ Nejdůležitější z nich jsou Internet Protocol (IP), Internet Control Message
 Internet Protocol je zodpovědný za směrování datagramů (paketů) ze zdrojového zařízení do cílového zařízení přes jednu nebo více IP sítí.
 Datagram se skládá z řídících dat a z uživatelských dat.
 Řídící data zajišťují informace k doručení datagramů (adresu zdroje a cíle, kontrolní součty, informace o pořadí atd.).
+Při zátěži sítě nebo přerušení některé její části se může snadno stát, že diagramy vůbec nedorazí na místo určení. Taktéž mohou dorazit vícekrát a IP protokol v základní verzi neručí ani za pořadí doručovaných diagramů.  
 
-Datagramy putují sítí zcela nezávisle.
-IP protokol v doručování datagramů používá nespolehlivé spojení (službu).
-To znamená, že všechny zařízení na síti se snaží datagram doručit do cíle podle svých možností, ale prakticky za nic neručí.
-
-Datagram vůbec nemusí dorazit na místo určení, nebo může dorazit vícekrát a neručí se ani za pořadí doručených datagramů.
 
 \secc ICMP
 
@@ -124,12 +115,12 @@ Mezi dvěma zařízeními může v jeden okamžik vzniknout několik spojení.
 
 Identifikační adresa aplikačního procesu je tvořena zdrojovou adresou, cílovou adresou a číslem portu a je známa pod pojmem Socket.
 
-Transportní vrstva obsahuje, jak jinak, větší množství protokolů.
+Transportní vrstva obsahuje větší množství protokolů.
 Zde uvedeme jen dva protokoly a to TCP a UDP.
 
 \secc TCP (Transmission Control Protocol)
 
-Jeden z nejvíce využívaných protokolů v transportní vrstvě je TCP (Transmission Control Protocol).TCP protokol zajišťuje vytvoření spojení mezi dvěma zařízeními v síti, přes které obě zařízení mohou obousměrně komunikovat.
+Jeden z nejvíce využívaných protokolů v transportní vrstvě je TCP (Transmission Control Protocol). TCP protokol zajišťuje vytvoření spojení mezi dvěma zařízeními v síti, přes které obě zařízení mohou obousměrně komunikovat.
 TCP protokol garantuje spolehlivý (bezchybný) přenos datagramů a to i ve správném pořadí.
 
 \secc UDP (User Datagram Protocol)
@@ -148,14 +139,13 @@ UDP protokol je zejména vhodný pro nasazení u časově kritických aplikací 
 
 Účelem aplikační vrstvy je poskytnout aplikacím přístup ke komunikačnímu systému a umožnit tak jejich spolupráci.
 
-Na rozdíl od prezentační vrstvy, která se nezabývá vlastním významem přenášených dat, jsou
-
-právě tyto informace aplikační vrstvou rozeznávány.
+Na rozdíl od prezentační vrstvy, která se nezabývá vlastním významem přenášených dat, jsou právě tyto informace aplikační vrstvou rozeznávány.
 
 Stejně jako na nižších vrstvách i na aplikační vrstvě se můžeme setkat s různými protokoly.
 Tyto protokoly mohou být vázány ke konkrétní aplikaci, ale existují i aplikační protokoly, které jsou v některých případech nezbytné pro správný chod sítě a s aplikací běžící na aplikační vrstvě nemají nic společného.
 Případem takového protokolu je například DHCP protokol (Dynamic Host Configuration Protocol).
 Dalšími známějšími protokoly aplikační vrstvy jsou protokoly HTTP, IMAP, SSH, POP3 a další.
+
 
 
 
