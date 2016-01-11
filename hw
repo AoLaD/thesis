@@ -191,6 +191,7 @@ Druhá varianta RMII (Reduced Media Independent Interface) pracuje s poloviční
 
 MII (RMMI) dovoluje přenášet datagramy rychlostí 100Mbit/s.
 
+\label[HMAC]
 \secc MAC
 
 Část MAC, která je součástí mikrokontroléru je mimo jiné v souladu s normou IEEE 802.3 – 2002 Ethernet MAC, s normou IEEE 1588-2008 standard for precision networked clock synchronization (přesná síťová synchronizace s hodinami) a s RMII specifikací z konsorcia RMII.

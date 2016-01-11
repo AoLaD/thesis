@@ -6,7 +6,7 @@ Tato diplomová práce si klade za cíl navrhnout, implementovat a začlenit pod
 Do operačnímu systému je potřeba začlenit podporu obsluhy základních periferii.
 Pro zprovoznění operačního systému RTEMS na nové hardwarové platformě je minimálně nutná implementace periferie časovače a obsluha sériových portů.
 Aby mohl být výsledný naimplementovaný ovladač použit a začleněn do hlavního vývojového stromu projektu RTEMS, musí ovladač odpovídat požadavkům projektu na čitelnost a formátování vyžadovaného komunitou.
-Pro zvýšení uplatnitelnosti podpory nové rodiny mikrokontrolérů je taktéž potřeba vybavit portaci hlavičkovými soubory, které jsou nutné pro využití v dalších perifériích mikrokontroléru TMS570.
+Pro zvýšení uplatnitelnosti podpory nové rodiny mikrokontrolérů je taktéž potřeba vybavit portaci hlavičkovými soubory, které jsou nutné pro využití v dalších perifériích mikrokontroléru TMS570.
 K začlenění hlavičkových souborů popisujících periferie a jádro mikrokontroléru TMS570 je nutné, aby hlavičkové soubory odpovídaly zvyklostem projektu RTEMS jak licencí, tak formou.
 Dalším úkolem je vytvoření podpory síťového rozhraní ETHERNET pro mikrokontrolér TMS570 s operačním systémem RTEMS.
 V neposlední řadě je důležité výsledný implementovaný kód otestovat na vývojovém kitu TMS570LS31xHDK a důsledně zdokumentovat.
@@ -24,32 +24,35 @@ Text této diplomové práce lez použít pro základní seznámení s mikrokont
 
 \medskip
 
-Teoretická část diplomové práce je rozdělena na popis použitých hardwarových\ref[HMAIN] a programových \ref[SMAIN] částí.
-Mezi hardwarem může čtenář najít informace o použitém mikrokontroléru TMS570LS \ref[H21], včetně popisu některých pro tuto práci důležitých periferii.
-Hlavně se jedná o časovač \ref[H23], pro podporu plánovače operačního sysému, modelu řízení přerušení \ref[H25] a periferie seriových portů\ref[H24] vhodných pro základní komunikaci.
-Do hardwarového popisu patří ještě popis ETHERNETové \ref[HETH] periferie společně s popisem mikrokontrolového modulu MAC \ref[HMAC]. V neposlední řadě jsou zde základní informace o vývojovém kitu TMS570LS HDK \ref[HKIT].
+Teoretická část diplomové práce je rozdělena na popis použitých hardwarových (kapitola \ref[HMAIN]) a programových (kapitola \ref[SMAIN]) částí.
+V kapitole věnované hardwarovým platformám může čtenář najít informace o použitém mikrokontroléru TMS570LS (kapitola \ref[H21]), včetně popisu některých, pro tuto práci důležitých periferii.
+Časovač (kapitola \ref[H23]) je nutný jako zdroj aktuálního času a především časování v aplikacích a přidělování procesorového času plánovačem.
+Dále je zde popsán model řízení přerušení (kapitola \ref[H25]) a periferie seriových portů (kapitola \ref[H24]) vhodných pro základní komunikaci.
+Do hardwarového popisu patří ještě popis ETHERNETové (kapitola \ref[HETH]) periferie společně s popisem na mikrokontroléru integrovaném řadiče MAC (kapitola \ref[HMAC]) a externího fyzického rozhraní.
+V neposlední řadě jsou zde základní informace o vývojovém kitu TMS570LS HDK (kapitola \ref[HKIT]).
 
-Popis programových částí \ref[SMAIN] je rozdělen do tří hlavních témat. Jako první je zde krátký úvod do operačního systému RTEMS \ref[SRTEMS].
-Po operačním systému následuje obecný popis knihovny LwIP \ref[SLWIP] společně s doporučeným postupem vytváření nového ovladače \ref[S21].
-V poslední části programového úvodu do problematiky je velmi lehký nástin fungování ETHERNETU \ref[SETH] ze softwarového pohledu.
+Popis programových částí (kapitola \ref[SMAIN]) je rozdělen do tří hlavních témat. Jako první je zde krátký úvod do operačního systému RTEMS (kapitola \ref[SRTEMS]).
+Po seznámením s operačním systémem následuje obecný popis knihovny LwIP (kapitola \ref[SLWIP]).
+V poslední části programového úvodu do problematiky je velmi lehký nástin fungování ETHERNETU (kapitola \ref[SETH]) ze softwarového pohledu.
 
-Realizační část diplomové práce \ref[Realizace] sleduje pořadí dílčích úkolů nutných k dosáhnutí výsledné implementace.
-Během přípravy projektu bylo nutné, aby byly připraveny podklady pro hlavičkové soubory \ref[PHlav].
+Realizační část diplomové práce (kapitola \ref[Realizace]) sleduje pořadí dílčích úkolů nutných k dosažení výsledné implementace.
+Během přípravy projektu bylo nutné, aby byly připraveny podklady pro hlavičkové soubory (kapitola \ref[PHlav]).
 Tyto soubory v sobě obsahují kompletní popis použité hardwarové platformy, tedy mikrokontroléru TMS570.
-Systém generace hlavičkových souborů \ref[GHlav] je popsán v další kapitole.
+Systém generace hlavičkových souborů (kapitola \ref[GHlav]) je popsán v další kapitole.
 
-Po úspěšném vygenerování hlavičkových souborů bylo potřeba zvážit programový model vyvíjené aplikace a připravit vše potřebné pro start operačního systému \ref[Start] RTEMS.
-Před počátkem vlastní implementace je nutné připravení souborů k začlenění TMS570 do RTEMS \ref[RRTEMS] projektu.
-Když je vše připraveno, lze začít s počáteční integrací základních periferii do RTEMS \ref[RInt].
-Jako první část implementace se obvykle volí výstup ze seriových portů \ref[RSerial].
-Tím se dosáhne jednoduší možnosti ladění kódu.
+Po úspěšném vygenerování hlavičkových souborů bylo potřeba zvážit programový model vyvíjené aplikace a připravit vše potřebné pro start operačního systému (kapitola \ref[Start]) RTEMS.
+Před počátkem vlastní implementace je nutné připravení souborů k začlenění TMS570 do RTEMS (kapitola \ref[RRTEMS]) projektu.
+Když je vše připraveno, lze začít s počáteční integrací základních periferií do projektu RTEMS (kapitola \ref[RInt]).
+Jako první část implementace se obvykle volí výstup ze seriových portů (kapitola \ref[RSerial]).
+Tento výstup pak slouží dále pro ladění a komunikaci s jádram a testy běžícími na hardware.
 Po úspěšném zobrazení znaků přijatých na seriovém portu následuje prostor pro integraci časovače \ref[RCas].
 Podpora časovače je nezbytná pro počáteční start a běh operačního systému.
-Zbylá integrace modulu VIM \ref[RVIM] a PINMUX \ref[RPin] už je pouze logický důsledek přípravy na implementace sítové knihovny.
+Zbylá integrace modulu VIM (kapitola \ref[RVIM]) a PINMUX (kapitola \ref[RPin]) už je pouze logický důsledek přípravy na implementace sítové knihovny.
 
-Integrace síťového rozhraní je rozdělena do tří stejně důležitých částí. Jedná se o přizpůsobení operačnímu systému RTEMS \ref[R61], přizpůsobení hardwarové platformě TMS570 \ref[R62] a konečně přizpůsobení knihovně LWIP \ref[R63].
+Integrace síťového rozhraní je rozdělena do tří stejně důležitých částí.
+Jedná se o přizpůsobení vybraného protokolového zásobníku operačnímu systému RTEMS (kapitola \ref[R61]), přizpůsobení hardwarové platformě TMS570 (kapitola \ref[R62]) a konečně přizpůsobení knihovně LWIP (kapitola \ref[R63]).
 
-Výsledky dosažené v této diplomové práci byly průběžně testovány \ref[RTest] a ačkoliv se při testování objevilo mnoho záludných problémů, vedou k jednoznačně pozitivnímu závěru \ref[RZáv]. 
+Výsledky dosažené v této diplomové práci byly průběžně testovány (kapitola \ref[RTest]) a ačkoliv se při testování objevilo mnoho záludných problémů, vedly k jednoznačně pozitivnímu závěru (kapitola \ref[RZáv]). 
 
 \input hw
 
@@ -172,6 +175,12 @@ Tento způsob je vyrazně jednoduší naimplementovat.
 Zbývá jen rozhodnout jakým způsobem bude algoritmus pracovat s vyextrahovanými daty.
 Základním řešením je exportovat data do souboru ve formátu tabulky oddělené středníkem.
 Pokročilým řešením by bylo přidání abstrakční vrstvy sloužící ke zpracovávání dat.
+
+\secc Optimální řešení
+
+Ideální je dohoda s výrobcem čipu, aby data, která stejně během vývoje čipu a jeho podpory použíbá, poskytl.
+V tomto případě se i přes snahu nepovedlo od výrobce data obstarat, ale po několika dalších vydáních svých nástrojů pro podporu mikrokontrolérů Texas Instruments změnil licenci poskytnutých souborů.
+Přesto jsem přesvědčení, že vytvořené hlavičkové soubory v rámci této diplomové práce jsou v tuto chvíli podprobnější a stylově čistší.
 
 \label[GHlav]
 \sec Generování hlavičkových souborů
@@ -323,6 +332,9 @@ Počet zápisů do paměti typu flash je omezen.
 Jednoduchým řešením tohoto problému je rozšířit zavaděč tak, aby skoky z tabulky výjimek přeposílal do aplikace.
 Nevýhodou tohoto řešení je i několika skokové zpoždění reakční doby na přerušení nebo jinou výjimku.
 Na mikrokontroléru TMS570 se může tento problém vyřešit pomocí periferie POM, která může tabulku výjimek překrýt virtuální stránkou paměti a tím tabulku přesměrovat bez nutnosti přepisovat flash paměť. 
+Mechanizmus je však určen především pro ladění a pokud je využitý, tak není možné povolit ochrany proti chybám v paměti.
+Proto je potřeba podle aplikace a oblasti použití volit vhodnou alternativu.
+Pro ušetření omezeného počtu zápisových cyklů Flash a jednoduchost byl po dobu vývoje používaná především alternativa s využitím překryvu realizovaného POM a běh kódu z externí paměti SDRAM.
 	 
 \label[RRTEMS]
 \sec Návrh a začlenění TMS570 do RTEMS
@@ -335,7 +347,7 @@ V kořenovém adresáři je možné mimo konfiguračních a instalačních skrip
 
 Tato diplomová práce se zabývá přidáním podpory a tedy podpůrných kódů pro mikrokontrolér TMS570 (BSP).
 Jádro mikrokontroléru ARM již bylo projektem RTEMS podporováno a složka pro BSP založené na arm jádře je umístěna v rtems/c/src/lib/libbsp/arm.
-Pokud by bylo potřeba přidat zcela novou architekturu, musela by se vytvořit příslušná složka v rtems/c/src/lib/libbsp ale hlavně i v rtems/c/src/lib/libcpu.
+Pokud by bylo potřeba přidat zcela novou architekturu, musela by se vytvořit příslušná složka v rtems/c/src/lib/libbsp, rtems/c/src/lib/libcpu ale hlavně i v rtems/cpukit/score/cpu.
 Složka libcpu obsahuje definice a podporu různých modelů jader mikrokontrolérů. Jako typický příklad lze uvést obsluhu paměti CACHE nebo způsob přímého přístupu do paměti (DMA).
 Obojí je charakteristické právě pro jádro mikrokontroléru.
 Tímto způsobem mohou dva mikrokontroléry se stejným jádrem sdílet stejný kód, přestože pocházejí od od konkurenčních výrobců.
@@ -627,7 +639,7 @@ Avšak klade mnohonásobně větší nároky na strojový čas, protože je neus
 Implementace ovladače v této práci používá první způsob a pro jeho realizaci jsou vytvořeny struktury rxch a txch.
 Deklarace všech struktur jsou v souboru tms570\_emac.h.
 Odesílání paketů z knihovny LwIP je řešeno analogicky k přijímání dat.
-Jediná výjimka je, že obslužný kód běží  v strojovém čase obslužného vlákna knihovny LwIP a ne ve vlastním samostatném vlákně.
+Jediná výjimka je, že obslužný kód běží v strojovém čase obslužného vlákna knihovny LwIP a ne ve vlastním samostatném vlákně.
 
 Systém předávání interních dat v ovladači a parametrů mezi ovladačem a knihovnou LwIP je realizován pomocí struktury netif.
 Tato struktura je v kompetenci knihovny LwIP a ze zásad objektového přístupu není vhodné ji měnit jinak, než přes vyexportované nastavující funkce.
