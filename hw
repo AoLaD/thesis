@@ -8,14 +8,14 @@
 
 Texas Instruments nabízí rodinu mikrokontrolérů TMS570, které jsou vhodné pro použití v bezpečnostně-kritických aplikacích.
 Obvody TMS570 mají snahu zjednodušit vývoj cílových systémů, neboť jsou již primárně navrženy pro dosažení Safety Integrity Level 3 (SIL 3) standardu IEC61508.
-V současné době jsou dostupné například moduly TMS570LS, zahrnující dvě 32-bitové jádra CORTEX--R4, pracující v režimu "lock-step".
+V současné době jsou dostupné například moduly TMS570LS, zahrnující dvě 32-bitová jádra CORTEX--R4, pracující v režimu "lock-step".
 Taktované jsou na 160 MHz (250 DMIPS) a při práci využívají přidruženou jednotku pro práci s plovoucí čárkou (FPU), vhodnou pro rychlé 32-bitové a 64-bitové výpočty a operace s plovoucí desetinnou čárkou (IEEE 754).
 Instrukce s plovoucí čárkou a celočíselné instrukce je tak možné zpracovávat paralelně, s cílem dosažení vyššího výpočetního výkonu.
 
 Jádro CORTEX--R4 obsahuje dvaatřiceti bitovou ARM a šestnácti nebo dvaatřiceti bitovou Thumb2 instrukční sadu.
 Jádro dovoluje aplikaci přepínat mezi oběma instrukčními sadami, podle aktuálních požadavků programového kódu.
 Tím je zajištěn optimální kompromis mezi výpočetní rychlostí a velikostí programového kódu.
-Obvody z řady TMS570 jsou v současné době k dispozici s integrovanou programovou pamětí typu Flash s kapacitou 1 až 2 MB a datovou pamětí 128 až 160 KB.
+Obvody z řady TMS570 jsou v současné době k dispozici s integrovanou programovou pamětí typu Flash s kapacitou 1 až 2 MB.
 
 Důležitou složkou mikrokontrolérů TMS570 je tzv.
 High End Timer (NHET).
@@ -33,18 +33,17 @@ Kromě zmíněného umožňuje připojení k SPI či LIN/SCI modulu.
 
 \secc Bezpečnost mikrokontroléru
 
-Rodina obvodů TMS570LS na jediném čipu kombinuje dvě shodná jádra typu CORTEX--R4, se shodným programem při použití funkce "lock-step".
-Operace a výsledky obou výpočtů jsou v každém cyklu logiky CPU porovnávány s cílem identifikovat potenciálně problémová místa a adekvátně na ně reagovat.
+Rodina obvodů TMS570LS na jediném čipu kombinuje dvě shodná jádra typu CORTEX--R4,která zpracovávají shodný tok instrukcí.
+Operace a výsledky obou výpočtů jsou po každém instrukčním cyklu CPU porovnávány s cílem identifikovat potenciálně problémová místa a adekvátně na ně reagovat.
 Obě jádra CORTEX--R4 mají implementovány geometrické a časové rozdíly, sloužící ke společnému odhalení možných hardwarových chyb.
 Druhé jádro je uvedeno zrcadlově a při zpracovávání kódu využívá zpoždění v řádu několika cyklů.
 
 Výhodou synchronní architektury je především vysoké diagnostické pokrytí, neboť hardware, porovnávající práci obou jader, pracuje trvale v každém cyklu CPU.
-V případě detekce chyby je systém během několika cyklů hodin schopen přejít do stabilního stavu.
-S ohledem k tomu je detekce chyb možná pouze na hardwaru, který je pro software transparentní, alespoň pokud jde o hardwarové chyby.
+V případě detekce chyby je systém během několika cyklů hodin schopen chybu vyhodnotit a spustit program od začátku nebo přejít do nouzového režimu.
+Toto vede k transparentnosti hardwarových chyb. 
 
-V mikrokontroléru je integrován modul ECC, který diagnostikuje jak chyby v programu, tak i datové paměti mikrokontroléru TMS570 a zajišťuje příslušné reakce.
+V mikrokontroléru je integrován modul automatické detekce a nápravy ojedinělých chyb (ECC), který diagnostikuje jak chyby v programové paměti, tak i v datové paměti mikrokontroléru TMS570 a zajišťuje příslušné reakce.
 Tento modul umožňuje opravit chyby v jednom bitu a detekovat chyby ve dvou bitech datového slova.
-Není však schopen sledovat vnitřní adresovou sběrnici a hardwarový dekodér paměti.
 
 Obvody integrují dva typy self-test monitorovacích modulů CPU (LBIST) a pracovních dat (PBIST).
 Modul LBIST kontroluje jádro mikropočítače během inicializace.
@@ -58,7 +57,7 @@ Pro monitorování přístupu k určité oblasti přidělené paměti, nebo obla
 
 Pro otestování staticky uložených dat je k dispozici 64-bit CRC jednotka, umožňující provoz na pozadí s využitím DMA přenosů.
 
-Většina periferních modulů taktéž vlastní schopnost detekce základních typů chyb, jako je například vnitřní test analogově-digitálního převodníku.
+Většina periferních modulů je vybavena schopností detekce základních typů chyb, jako je například vnitřní test analogově-digitálního převodníku.
 
 Všechny uvedené hlavní moduly, určené pro detekci chyb, jsou spojeny s modulem signalizace poruchových stavů.
 Ten umožňuje centralizovanou volbu priorit, analýzu a signalizaci všech zjištěných chyb dalším obvodům.
@@ -73,10 +72,10 @@ Periferie obsahuje několik čítačů, které mohou definovat základní časov
 Mimo jiné dovoluje periferie časovače využití některého z čítačů jako nástroj pro měření doby běhu celého programu nebo jeho úseků.
 Při používání komunikační periferie FlexRay, dovoluje modul časovače synchronizovat čas ze sběrnice FlexRay.
 
-Při poruše na sběrnici dokáže modul časovače automaticky přejít na vnitřní čas mikrokontroléru tak, aby běh operačního systému zůstal zachován.
+Při poruše sběrnice dokáže modul časovače automaticky přejít na vnitřní zdroj hodinového signálu mikrokontroléru tak, aby běh operačního systému zůstal zachován.
 
-Součástí periferie časovače je hlídací (watchdog) periferie.
-Úkolem této části mikrokontroléru je po prvním nastavení hlídat běh kódu a vynutit restart mikrokontroléru, pokud vykonávání hlídané smyčky kódu trvá delší nebo kratší dobu.
+Součástí periferie časovače je hlídací (watchdog) obvod.
+Úkolem této části mikrokontroléru je po prvním nastavení hlídat běh kódu a vynutit restart mikrokontroléru, pokud vykonávání hlídané smyčky kódu trvá delší nebo kratší dobu, než je specifikováno.
 
 Tento modul je navržen tak, aby odpovídal požadavkům normy automobilového průmyslu OSEK.
 
@@ -102,13 +101,14 @@ Vstup do každé z těchto čtyřech porovnávacích jednotek může být zvolen
 \label[H24]
 \secc Sériové porty
 
-Obsluha seriových portů v mikrokontroléru tms570 je možná ze dvou periferii.
+Obsluhu sériových portů v mikrokontroléru TMS570 podporují dvě periferie.
 V obou je obsluha sériových portů stejná, ale periferie SCI/LIN poskytuje vývojáři rozšířenou funkcionalitu o protokol LIN.
-Základní funkčností sériových periferií je tedy protokol universální asynchronní sériové komunikace (UART).
+Základní funkcí obou periferií je tedy protokol universální asynchronní sériové komunikace (UART), který využívá shodné rozložení registrů, 
+a proto stačí pouze jeden ovladač. 
 LIN je protokol vycházející z protokolu UART, který podporuje komunikaci typu jeden hlavní a více vedlejších zařízeních s možností adresovat více zařízení v síti najednou.
 Periferie podporuje jednocestnou i oboucestnou komunikaci, dva kanály přerušení, 1-8bitů přenesených dat, volitelný devátý bit pro adresování, možnost sudé nebo liché parity a samozřejmě jeden až dva konečné bity za znakem.
 
-V dnešní energeticky úsporné době může přijít vhod možnost probouzení mikrokontroléru přijetím zprávy.
+Vzhledem ke stále rostoucím požadavkům na energetickou úspornost může přijít vhod možnost probouzení mikrokontroléru přijetím zprávy.
 Periferie pro obsluhu sériového portu (SCI) se skládá ze tří hlavních bloků:
 
 \begitems
@@ -137,24 +137,24 @@ Znázorněný adresový bit je velmi důležitý při usnadnění komunikace ví
 
 Kvůli snadnější obsluze přerušení byl firmou Texas Instruments do mikrokontroléru zakomponován modul řadiče vektorových přerušení (VIM).
 Periferie, které generují žádosti o přerušení, posílají zprávy do modulu VIM.
-Po jejich zpracování rozhodne modul, jestli je žádost oprávněná.
+Po jejich zpracování rozhodne modul, jestli je žádost povolená.
 Po kladném vyhodnocení modul VIM pošle znamení jádru mikrokontroléru (CORTEX--R4), aby bylo provedeno přerušení.
 Následně modul VIM pomáhá s jeho řízením čtyřmi rozlišnými způsoby.
 
 Nejstarší přístup pracuje tak, jak by to bylo běžné v jádře CORTEX--R4.
 Řízení je předáno na adresu vektoru přerušení v tabulce výjimek jádra.
-Úkolem obslužné rutiny je přečíst registr IRQINDEX, kam modul VIM uložil index právě probíhajícího přerušení.
+Úkolem obslužné rutiny je přečíst registr IRQINDEX, kam modul VIM uložil index právě aktivní žádosti.
 Tento přístup je kompatibilní se staršími mikrokontroléry jako je TMS470.
 
-Trošku modernější přístup automaticky připraví vektor přerušení.
-Nicméně je potřeba tyto vektory vyplnit před zapnutím přerušení do paměti associované s modulem VIM.
+Poněkud modernější přístup automaticky připraví vektor přerušení.
+Nicméně je potřeba tyto vektory vyplnit před zapnutím přerušení do paměti asociované s modulem VIM.
 Jakmile modul VIM obdrží žádost o přerušení, připraví do registru IRQVECREG adresu rutiny přerušení, kterou si načetl z předem vyplněné tabulky.
 Obecná obslužná rutina přerušení, která se nachází v tabulce výjimek, může pouze provést skok na adresu vyplněnou modulem VIM.
 
 Třetí automatický přístup lze použít pouze pro obyčejná přerušení (IRQ) a ne pro přerušení s rychlou odezvou (FIQ).
 Postup přerušení je analogický k předchozímu přístupu s jedinou výjimkou.
-Modul VIM požádá jádro, aby neprovádělo skok na obvyklou adresu v tabulce výjimek, ale aby rovnou předalo řízení na adresu, kterou on jádru podstrčí.
-Tak se skočí na adresu, která odpovídá obsluze přerušení vyplněné při inicializaci.
+Modul VIM požádá jádro mikrokontroléru, aby neprovádělo skok na obvyklou adresu v tabulce výjimek, ale aby bylo předání řízení na adresu určenou modulem VIM.
+Tím je zaručeno, že již první procesorovým jádrem vykonaná instrukce po přijetí žádosti, jejíž první instrukce obslužné rutiny specifické pro danou periferii. 
 Tato funkcionalita se zapíná v jádře CORTEX--R4 pomocí bitu VE v konfiguračním registru.
 
 Poslední přístup předpokládá využití programem řízených přerušení.
@@ -174,7 +174,7 @@ Bohužel podrobnější informace o jádře CORTEX--R4 patří pod licenci firmy
 \label[HETH]
 \sec ETHERNET a PHY
 
-Adaptér pro ethernet / rychlý ethernet se v mikrokontrolérech rozděluje na dvě základní části a to na část MAC (Media Access Control), která řeší problémy na vyšší úrovni a je součástí mikrokontrolérů a na část PHY (Physical Layer Interface), která řeší fyzickou část připojení.
+Adaptér pro ethernet nebo rychlý ethernet se ve vestavěných systémech rozděluje na dvě základní části a to na část MAC (Media Access Control), která řeší problémy na vyšší úrovni a je součástí mikrokontrolérů, a na rozhraní fyzické vrstvy (Physical Layer Interface -- PHY), která řeší fyzickou část připojení.
 
 Propojení MAC s PHY je provedeno přes synchronní paralelní rozhraní, jak je uvedeno na obrázku \ref[eth1].
 
@@ -186,16 +186,16 @@ Propojení MAC s PHY je provedeno přes synchronní paralelní rozhraní, jak je
 
 
 Pro připojení PHY a MAC jsou k dispozici dvě varianty rozhraní.
-Prvním variantou rozhraním je rozhraní MII (Media Independent Interface) pracující se 4bitovou šířkou sběrnice a s časováním 25MHz.
-Druhá varianta RMII (Reduced Media Independent Interface) pracuje s poloviční sběrnicí, ale s dvojnásobným kmitočtem.
+První variantou rozhraní je rozhraní MII (Media Independent Interface) pracující se 4-bitovou šířkou sběrnice a s časováním 25 MHz.
+Druhá varianta RMII (Reduced Media Independent Interface) pracuje s poloviční šířkou sběrnice, ale s dvojnásobným kmitočtem.
 
-MII (RMMI) dovoluje přenášet datagramy až rychlostí blížící se 100Mbit/s.
+MII (RMMI) dovoluje přenášet datagramy rychlostí 100Mbit/s.
 
 \secc MAC
 
 Část MAC, která je součástí mikrokontroléru je mimo jiné v souladu s normou IEEE 802.3 – 2002 Ethernet MAC, s normou IEEE 1588-2008 standard for precision networked clock synchronization (přesná síťová synchronizace s hodinami) a s RMII specifikací z konsorcia RMII.
 
-MAC podporuje 10/100Mbit/s přenosovou rychlost, podle normy IEEE 802.3 obsahuje kompatibilní rozhraní MII pro komunikaci s externím FAST ETHERNET PHY, podporuje jak full-duplex, tak half duplex provoz včetně CSMA/CD protokolu v half-duplex provozu, podporuje IEEE802.3x řízení toku pro full-duplex provoz.
+MAC podporuje přenosovou rychlost, podle normy IEEE 802.3 obsahuje kompatibilní rozhraní MII pro komunikaci s externím obvodem realizujícím fyzické rozhraní FAST ETHERNET PHY, podporuje jak full-duplex, tak half-duplex provoz včetně CSMA/CD protokolu v half-duplex provozu, podporuje IEEE802.3x řízení toku pro full-duplex provoz.
 
 U mikrokontroléru TMS570LS3137 je MAC řešen třemi základními moduly a to kontrolním modulem (EMAC kontrol module), EMAC modulem (EMAC module) a MDIO modulem (MDIO module).
 
@@ -207,7 +207,7 @@ Jak je patrno z obrázku \ref[eth2], je řídící modul hlavním rozhraním mez
 \caption/f MAC moduly
 \medskip
 
-Součástí kontrolního modulu je řízení přerušení a 8KB interní vyrovnávací paměť pro popisovače (descriptors)
+Součástí kontrolního modulu je řízení přerušení a 8KB integrovaná vyrovnávací paměť rezervovaná pro popisovače (descriptors), která je mapovaná do adresního prostoru.
 
 Obrázek \ref[eth2] dále zobrazuje rozhraní mezi EMAC řídícím modulem a mikrokontrolérem (CPU).
 Spojení DMA sběrnice s EMAC řídícím modulem umožňuje čtení a zápis do vnitřní i vnější paměti bez využití CPU.
@@ -229,10 +229,10 @@ MII\_TXEN je signál uvolnění vysílání.
 Jako rozšíření se může použít i signál MII\_TXER (z MAC do PHY) chyba vysílání.
 
 MII\_RXCLK jsou opět kontinuální hodiny avšak pro Rx přenos.
-MII\_RXD[3-0] je přijímací paralelní sběrnice.
+MII\_RXD[3-0] je sběrnice pro příjem datových rámců.
 MII\_RXDV je signál, že jsou k dispozici platná data a MII\_RXER je signál chyby příjmu.
 
-MII\_COL je signál detekce kolize a MII\_CRS informuje o komunikaci na sbernici.
+MII\_COL informuje o kolizi a MII\_CRS informuje o komunikaci na sběrnici.
 Tyto signály mají význam jen v half-duplex režimu.
 
 Redukovaná varianta MII (RMII) je na obrázku \ref[eth4].
@@ -248,7 +248,7 @@ Redukovaná varianta MII (RMII) je na obrázku \ref[eth4].
 MDIO modul (Management data input output) umožňuje aplikaci získat přístup do až 32 registrů PHY zařízení pomocí dvouvodičové sběrnice (hodiny, data).
 MDIO rozhraní podporuje až 32 PHY zařízení.
 Aplikace může vybrat jeden libovolný registr v kterémkoliv PHY a posílat řídící data a přijímat informace o stavu.
-Avšak pouze jeden registr v jednom PHY zařízení může být adresován v jeden okamžik.
+Avšak pouze jeden registr v jednom PHY zařízení může být adresován v daném okamžiku.
 
 Maximální frekvence hodinového signálu MDIO\_CLK je 2,5MHz.
 MDIO\_D signál je oboustranný a umožňuje jak čtení, tak zápis.
@@ -264,8 +264,8 @@ Na obrázku \ref[eth5] je zobrazena datová struktura zprávy (frame).
 Preamble je inicializační pole a používá se k synchronizaci s PHY zařízením.
 PADDR je 5bitová adresa PHY zařízení a RADDR je 5bitová adresa registru.
 TA bity slouží k oddělení datového pole, aby se zabránilo k připojení během transakce čtení.
-Pro transakci čtení nastavuje MAC pro první i druhý TA bite vysokou impedanci na datovém vodiči (MDIO\_D).
-PHY zařízení musí nechat na prvním bitě TA vysokou impedanci (je nastaven jako vstup) a druhý bit TA nastaví na nulu (na logickou nulu).
+Pro transakci čtení nastavuje MAC pro první i druhý TA bit vysokou impedanci na datovém vodiči (MDIO\_D).
+PHY zařízení musí po dobu prvního bitu TA zachovat vysokou impedanci (je nastaven jako vstup) a po dobu druhého bitu TA být nastaveno na logickou nulu.
 Pro transakci zápisu MAC zařízení nastavuje TA bity na hodnotu „10“ a PHY zařízení se musí nastavit do vysoké impedance pro oba bity TA.
 
 Na obrázku číslo \ref[eth6] a \ref[eth7] jsou zobrazeny časové průběhy přenášených dat při transakci zápisu (\ref[eth6]) a při transakci čtení (\ref[eth7]).
@@ -284,7 +284,7 @@ Na obrázku číslo \ref[eth6] a \ref[eth7] jsou zobrazeny časové průběhy p�
 
 \sec DP83848
 
-DP83348 je modul PHY od společnosti Texas Instruments. Tento modul podporuje obě zmíněné možnosti připojení (MII a RMII).
+DP83348 je modul PHY od společnosti Texas Instruments. Tento obvod podporuje obě zmíněné možnosti připojení (MII a RMII).
 
 Standardní MII má sadu registrů od adresy 0h do adresy 7h
 
@@ -295,7 +295,7 @@ Vývojový kit TMS570LS31 společnosti Texas Instrumens poskytuje hardwarovou pl
 
 \secc  Popis kitu
 
-Podrobné informace k vývojovému kitu společnosti Texas Instrumens jsou dostupné v X a v X, včetně elektrického schématu a plošného spoje.
+Podrobné informace k vývojovému kitu společnosti Texas Instrumens jsou dostupné v X a v X, včetně elektrického schématu nebo výrobních podkladů k plošnému spoji.
 
 Vývojový kit je založen na mikrokontroléru TMS570LS31.
 Na obrázku \ref[eth11] je blokové schéma vývojového kitu. 
@@ -306,6 +306,7 @@ Na obrázku \ref[eth11] je blokové schéma vývojového kitu.
 \caption/f Blokové schéma vývojového kitu TMS570LS31 HDK
 \medskip
 
-Vývojový kit obsahuje Hercules TMS570LS3137 337-pin BGA mikrokontroler, 10/100Mbit Ethernet interface s PHY DP83640, externí JTAG konektor, UART, 8MB SDRAM, slot pro SD kartu přes SPI sběrnici, napájení od +5V do +12V @ 130mA.
+Vývojový kit je osazen mikrokontrolérem Hercules TMS570LS3137 v BGA pouzdře se 337 piny. Dále je zde 10/100Mbit síťové rozhraní s PHY DP83640, externí JTAG konektor, UART, 8MB SDRAM, slot pro SD kartu přes SPI sběrnici, napájení od +5V do +12V @ 130mA.
 Podrobnější specifikace je uvedena v X. 
+
 
